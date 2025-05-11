@@ -32,7 +32,7 @@ def renormalization_graph_random_center(
     # N_Adj = N_Adj.to_dense().int()
     # N_Adj = N_Adj | torch.eye(num_nodes, dtype=torch.int32, device=device)
     Adj = adj.clone().to(device)
-    N_Adj = nadj.clone().to_dense().to(device) | torch.eye(num_nodes, dtype=torch.int32, device=device)
+    N_Adj = nadj.clone().to_dense().int().to(device) | torch.eye(num_nodes, dtype=torch.int32, device=device)
 
     all_nodes = list(range(num_nodes))
     remaining_nodes = set(all_nodes)
