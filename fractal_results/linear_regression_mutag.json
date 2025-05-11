@@ -1,0 +1,17 @@
+[
+    {
+        "Statistics of Graph": {
+            "Nodes": 17,
+            "Edges": 19,
+            "Diameter": 9
+        },
+        "Linear Regression": {
+            "Origin Graph": {
+                "Slope": -0.7096487756269024,
+                "Intercept": 2.5178731253769477,
+                "R²": 0.829386005798664,
+                "Box_Dimension": 0.7096487756269024
+            }
+        }
+    }
+]
