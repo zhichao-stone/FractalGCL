@@ -69,6 +69,7 @@ if __name__ == "__main__":
     parser.add_argument("--cpu", action="store_true")
     parser.add_argument("--aug_type", type=str, default="renorm_rc")
     parser.add_argument("--aug_num", type=int, default=2)
+    parser.add_argument("--alpha", type=float, default=0.1)
     parser.add_argument("--epoch", type=int, default=100)
     parser.add_argument("--folds", type=int, default=10)
     parser.add_argument("--save_dir", type=str, default="save_model")
@@ -102,10 +103,9 @@ if __name__ == "__main__":
     dataloader = DataLoader(dataset, batch_size=batch_size)
     input_dim = max(tudataset.num_features, 1)
 
-    save_dir = args.save_dir
+    save_dir = os.path.join(args.save_dir, f"FractalGCL_{data_name}_{aug_type}")
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-    save_path = os.path.join(save_dir, f"FractalGCL_{data_name}_{aug_type}.pt")
 
     # model
     model = GConv(
@@ -117,14 +117,14 @@ if __name__ == "__main__":
     finetune_dataloader = DataLoader(tudataset, batch_size=batch_size)
 
     # train
-    if not os.path.exists(save_path) or args.force_train:
+    if not os.path.exists(save_dir) or args.force_train:
         augmentor = FractalAugmentor(
             drop_ratio=0.2, 
             aug_fractal_threshold=0.95, 
             renorm_min_edges=1, 
             device=device
         )
-        loss_fn = FractalGCLLoss(temperature=0.5, alpha=0.05, sigma=0.1)
+        loss_fn = FractalGCLLoss(temperature=0.4, alpha=args.alpha, sigma=0.1)
         optimizer = optim.Adam(model.parameters(), lr=0.01)
         epoch_accs = []
         with tqdm(total=max_epoch, desc="pretrain") as pbar:
@@ -137,15 +137,21 @@ if __name__ == "__main__":
                     test_acc = test_accuracy(model, finetune_dataloader, folds=folds, device=device)
                     logger.info(f"# Epoch: {epoch} | test acc: {test_acc:.4f}")
                     epoch_accs.append(test_acc)
+                    torch.save(model.state_dict(), os.path.join(save_dir, f"epoch{epoch}.pt"))
 
                 pbar.update()
                 
-        torch.save(model.state_dict(), save_path)
+        torch.save(model.state_dict(), os.path.join(save_dir, f"epoch{epoch}.pt"))
         best_epoch, best_acc = max(enumerate(epoch_accs), key=lambda x:x[1])
-        logger.info(f"# Final Results: {best_acc:.4f} , epoch={(best_epoch+1)*5}\n\n")
+        best_epoch = (best_epoch + 1) * 5
+        logger.info(f"# Final Results: {best_acc:.4f} , epoch={best_epoch:3d}\n\n")
     else:
-        model.load_state_dict(torch.load(save_path))
+        for root, dirs, files in os.walk(save_dir):
+            for f in files:
+                if f.endswith(".pt"):
+                    epoch = int(os.path.splitext(f)[0].replace("epoch", ""))
+                    model.load_state_dict(torch.load(os.path.join(save_dir, f)))
 
-        # test and statistic
-        test_acc = test_accuracy(model, dataloader, folds=folds, device=device)
-        logger.info(f"# Best CV Acc: {test_acc:.4f}")
+                    # test and statistic
+                    test_acc = test_accuracy(model, dataloader, folds=folds, device=device)
+                    logger.info(f"# Epoch: {epoch} | test acc: {test_acc:.4f}")

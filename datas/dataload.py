@@ -11,9 +11,17 @@ from sklearn.model_selection import StratifiedKFold
 
 def load_json(path: str, **kwargs):
     encoding = kwargs.pop("encoding", "utf-8")
-    with open(path, "r", encoding=encoding, **kwargs) as fr:
+    mode = kwargs.pop("mode", "r")
+    with open(path, mode, encoding=encoding, **kwargs) as fr:
         data = json.load(fr)
     return data
+
+def dump_json(obj, path: str, **kwargs):
+    encoding = kwargs.pop("encoding", "utf-8")
+    indent = kwargs.pop("indent", 4)
+    mode = kwargs.pop("mode", "w")
+    with open(path, mode, encoding=encoding, **kwargs) as fw:
+        json.dump(obj, fw, ensure_ascii=False, indent=indent)
 
 class FractalAttr:
     def __init__(self, 

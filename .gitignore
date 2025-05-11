@@ -1,3 +1,5 @@
 datasets/*
 *.pyc
 zz_*
+results/*
+*.xlsx
