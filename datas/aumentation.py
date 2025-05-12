@@ -22,7 +22,7 @@ def renormalization_graph_random_center(
     num_nodes = edge_index.max().item() + 1
 
     # cluster supernodes
-    center_nodes = np.zeros(num_nodes, dtype=int)
+    center_nodes: np.ndarray = np.zeros(num_nodes, dtype=int)
 
     # values = torch.ones(edge_index.size(-1))
     # Adj = torch.sparse_coo_tensor(edge_index, values, size=(num_nodes, num_nodes)).to(device)
@@ -37,17 +37,13 @@ def renormalization_graph_random_center(
     all_nodes = list(range(num_nodes))
     remaining_nodes = set(all_nodes)
     num_supernodes = 0
-    # supernode_size = []
 
     while remaining_nodes:
         c = random.choice(list(remaining_nodes))
-
         balls = torch.where(N_Adj[c])[0].cpu().tolist()
         center_nodes[balls] = num_supernodes
 
         remaining_nodes = remaining_nodes.difference(balls)
-
-        # supernode_size.append(len(balls))
         num_supernodes += 1
 
         N_Adj[balls, :] = 0
@@ -56,7 +52,6 @@ def renormalization_graph_random_center(
     # calculate features of supernodes
     supernodes_features = torch.zeros((num_supernodes, x.size(-1)), device=device)
     for n, c in enumerate(center_nodes):
-        # supernodes_features[c] += graph.ndata["feat"][n] / supernode_size[c]
         supernodes_features[c] += x[n]
 
     # calculate supernode edges
@@ -64,7 +59,6 @@ def renormalization_graph_random_center(
     A = torch.matmul(torch.matmul(S, Adj), S.T).to_dense()
     A = A - torch.diag_embed(A.diag()).to(device)
     renorm_edges = torch.where(A >= min_edges)
-
     renorm_edges = torch.stack(renorm_edges)
 
     return supernodes_features, renorm_edges
@@ -87,14 +81,15 @@ class FractalAugmentor:
         self.nadjs: Dict[int, List[torch.Tensor]] = {}
 
     def merge_batch(self, batch_x: List[torch.FloatTensor], batch_edge_index: List[torch.LongTensor]):
-        edge_index, batch = torch.tensor(batch_edge_index[0]), [0 for _ in range(batch_x[0].size()[0])]
-        bias = len(batch_x[0])
-        for i in range(1, len(batch_x)):
-            batch += [i for _ in range(batch_x[i].size()[0])]
-            edge_index = torch.cat((edge_index, batch_edge_index[i]+bias), dim=-1)
-            bias += len(batch_x[i])
-        x = torch.cat(batch_x)
-        return x, edge_index, torch.tensor(batch, dtype=torch.int64)
+        edges, batches = [], []
+        bias = 0
+        for i in range(len(batch_x)):
+            graph_size = batch_x[i].size(0)
+            edges.append(batch_edge_index[i] + bias)
+            batches.append((torch.ones(graph_size) * i).long())
+            bias += graph_size
+        x, edge_index, batch = torch.cat(batch_x, dim=0), torch.cat(edges, dim=-1), torch.cat(batches, dim=-1)
+        return x, edge_index, batch
 
     def calculate_nadj(self, gid: int, edge_index: torch.Tensor, max_r: int):
         if gid not in self.nadjs:
