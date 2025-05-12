@@ -1,3 +1,5 @@
+import math
+import random
 from typing import List, Dict
 
 import torch
@@ -60,3 +62,17 @@ def k_fold(num_samples: int, folds: int = 10):
         ))
 
     return splits
+
+
+def split_batches(num_samples: int, batch_size: int = 128, shuffle: bool = False) -> List[List[int]]:
+    """
+    return indices of batches
+    """
+    bn = math.ceil(num_samples / batch_size)
+    indices = list(range(num_samples))
+    if shuffle:
+        random.shuffle(indices)
+    batches: List[List[int]] = []
+    for i in range(bn):
+        batches.append(indices[i*batch_size : (i+1)*batch_size])
+    return batches

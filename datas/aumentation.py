@@ -24,7 +24,7 @@ def renormalization_graph_random_center(
     # cluster supernodes
     center_nodes = np.zeros(num_nodes, dtype=int)
 
-    values = torch.ones(edge_index.size(-1))
+    # values = torch.ones(edge_index.size(-1))
     # Adj = torch.sparse_coo_tensor(edge_index, values, size=(num_nodes, num_nodes)).to(device)
     # N_Adj = Adj.clone().to(device)
     # for _ in range(1, radius):
@@ -99,7 +99,7 @@ class FractalAugmentor:
     def calculate_nadj(self, gid: int, edge_index: torch.Tensor, max_r: int):
         if gid not in self.nadjs:
             num_nodes = edge_index.max().item() + 1
-            values = torch.ones(edge_index.size(-1))
+            values = torch.ones(edge_index.size(-1)).to(self.device)
             adj = torch.sparse_coo_tensor(edge_index, values, size=(num_nodes, num_nodes)).to(self.device)
             self.nadjs[gid] = [adj]
 
@@ -123,19 +123,15 @@ class FractalAugmentor:
         aug_num: int = 2, 
     ):
         batch_size = len(diameters)
-        batch_x, batch_edge_index = [[] for _ in range(batch_size)], [[] for _ in range(batch_size)]
-        x_batch = [0 for _ in range(x.size()[0])]
-        graph_bias = [0 for _ in range(batch_size)]
-        current_gid = -1
-        for i in range(x.size()[0]):
-            gid = batch[i]
-            x_batch[i] = gid
-            batch_x[gid].append(x[i])
-            if current_gid < gid:
-                graph_bias[gid], current_gid = i, gid
-        for u, v in edge_index.T:
-            batch_edge_index[x_batch[u]].append([u, v])
-        batch_x, batch_edge_index = [torch.stack(bx) for bx in batch_x], [torch.tensor(bei).T - graph_bias[i] for i, bei in enumerate(batch_edge_index)]
+        batch_x: List[torch.Tensor] = []
+        batch_edge_index: List[torch.Tensor] = []
+        for i in range(batch_size):
+            index = torch.where(batch == i)[0].tolist()
+            min_node, max_node = index[0], index[-1]
+            batch_x.append(x[index].to(self.device))
+            indices = torch.nonzero((edge_index[0] >= min_node) & (edge_index[0] <= max_node)).squeeze().tolist()
+            batch_edge: torch.Tensor = edge_index.T[indices] - min_node
+            batch_edge_index.append(batch_edge.T.to(self.device))
 
         aug_xs, aug_edge_indexs = [[] for _ in range(aug_num)], [[] for _ in range(aug_num)]
         for i in range(batch_size):

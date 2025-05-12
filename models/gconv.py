@@ -40,6 +40,6 @@ class GConv(nn.Module):
         g = torch.cat([global_add_pool(z, batch) for z in zs], dim=1)
 
         if project:
-            g = self.project(g)
+            g: torch.Tensor = self.project(g)
 
         return g
