@@ -91,8 +91,11 @@ def finetune(
     model: nn.Module, 
     dataloader: DataLoader, 
     num_classes: int, 
+    mlp_num_layers: int = 2, 
     mlp_hidden_dim: int = 64, 
     folds: int = 10, 
+    learning_rate: float = 0.001, 
+    weight_decay: float = 1e-5, 
     max_epochs: int = 100, 
     device: torch.device = torch.device("cuda")
 ):
@@ -110,8 +113,13 @@ def finetune(
         split = splits[i].dict()
         x_train, x_val, x_test, y_train, y_val, y_test = [obj[split[key]] for obj in [features, labels] for key in ["train", "valid", "test"]]
         x_train, y_train = torch.cat([x_train, x_val], dim=0), torch.cat([y_train, y_val], dim=0)
-        mlp = MLP(input_dim=features.size(-1), hidden_dim=mlp_hidden_dim, output_dim=num_classes).to(device)
-        optimizer = optim.Adam(mlp.parameters(), lr=0.001, weight_decay=1e-5)
+        mlp = MLP(
+            input_dim=features.size(-1), 
+            hidden_dim=mlp_hidden_dim, 
+            output_dim=num_classes, 
+            num_layers=mlp_num_layers
+        ).to(device)
+        optimizer = optim.Adam(mlp.parameters(), lr=learning_rate, weight_decay=weight_decay)
         best_acc = 0.0
         for epoch in range(max_epochs):
             train_mlp(mlp, optimizer, x_train, y_train, batch_size, device)
@@ -124,23 +132,10 @@ def finetune(
 
 
 if __name__ == "__main__":
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--data", type=str, default="MUTAG")
-    parser.add_argument("--batch_size", type=int, default=128)
-    parser.add_argument("--random_seed", type=int, default=12306)
-    parser.add_argument("--cpu", action="store_true")
-    parser.add_argument("--aug_type", type=str, default="renorm_rc")
-    parser.add_argument("--aug_num", type=int, default=2)
-    parser.add_argument("--alpha", type=float, default=0.1)
-    parser.add_argument("--epoch", type=int, default=100)
-    parser.add_argument("--folds", type=int, default=10)
-    parser.add_argument("--save_dir", type=str, default="save_model")
-    parser.add_argument("--force_train", action="store_true")
-    args = parser.parse_args()
+    # base arguments
+    args = get_args()
     device = torch.device(f"cpu" if args.cpu or not torch.cuda.is_available() else "cuda")
     folds = args.folds
-    max_epoch = args.epoch
     aug_type = args.aug_type
     batch_size: int = args.batch_size
     data_name = str(args.data).upper()
@@ -163,43 +158,44 @@ if __name__ == "__main__":
     num_classes = tudataset.num_classes
 
     # model
-    gconv_num_layers = 2
-    gconv_hidden_dim = 64
+    gconv_num_layers = args.gconv_num_layers
+    gconv_hidden_dim = args.gconv_hidden_dim
     model = GConv(
         input_dim=input_dim, 
         hidden_dim=gconv_hidden_dim, 
         num_layers=gconv_num_layers
     ).to(device)
 
-    finetune_dataloader = DataLoader(tudataset, batch_size=batch_size)
-
-    # train
+    # Pretrain
     save_dir = os.path.join(args.save_dir, f"FractalGCL_{data_name}_{aug_type}")
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
     for root, dirs, files in os.walk(save_dir):
-        need_train = len(files) == 0
+        need_train = (len(files) == 0)
 
     if need_train or args.force_train:
-        # Pretrain
         augmentor = FractalAugmentor(
             drop_ratio=0.2, 
             aug_fractal_threshold=0.95, 
             renorm_min_edges=1, 
             device=device
         )
-        loss_fn = FractalGCLLoss(temperature=0.4, alpha=args.alpha, sigma=0.1)
-        optimizer = optim.Adam(model.parameters(), lr=0.01)
+        pure_dataloader = DataLoader(tudataset, batch_size=batch_size)
+        
+        loss_fn = FractalGCLLoss(temperature=args.temperature, alpha=args.alpha, sigma=args.sigma)
+        optimizer = optim.Adam(model.parameters(), lr=args.pretrain_lr, weight_decay=args.pretrain_wd)
+
         epoch_accs = []
-        with tqdm(total=max_epoch, desc="pretrain") as pbar:
-            for epoch in range(1, max_epoch+1):
+        max_epochs = args.pretrain_max_epochs
+        with tqdm(total=max_epochs, desc="pretrain") as pbar:
+            for epoch in range(1, max_epochs+1):
                 st = time.time()
                 loss = train(model, dataloader, optimizer, augmentor, aug_type, loss_fn, device, aug_num=args.aug_num)
                 pbar.set_postfix({"loss": round(loss, 4), "time": round(time.time() - st, 2)})
 
                 if epoch % 5 == 0:
-                    test_acc = test_accuracy_SVC(model, finetune_dataloader, folds=folds, device=device)
+                    test_acc = test_accuracy_SVC(model, pure_dataloader, folds=folds, device=device)
                     logger.info(f"# Epoch: {epoch} | test acc: {test_acc:.4f}")
                     epoch_accs.append(test_acc)
                     torch.save(model.state_dict(), os.path.join(save_dir, f"epoch{epoch}.pt"))
@@ -210,37 +206,46 @@ if __name__ == "__main__":
         best_epoch, best_acc = max(enumerate(epoch_accs), key=lambda x:x[1])
         best_epoch = (best_epoch + 1) * 5
         logger.info(f"# Final Results: {best_acc:.4f} , epoch={best_epoch:3d}\n\n")
-    else:
-        # Multiple Experiment: K-Fold Finetune and Test
-        accs, acc_epochs = [], []
-        seeds = random.sample(list(range(100000)), 10)
-        for seed in seeds:
-            logger.info(f"=============== Seed {seed} ===============")
-            set_random_seed(seed)
-            best_acc, best_acc_std, best_acc_epoch = 0.0, 0.0, -1
-            for root, dirs, files in os.walk(save_dir):
-                epochs = sorted([int(os.path.splitext(f)[0].replace("epoch", "")) for f in files if f.endswith(".pt")])
-                for epoch in epochs:
-                    model.load_state_dict(torch.load(os.path.join(save_dir, f"epoch{epoch}.pt")))
 
-                    # finetune, test and statistic
-                    test_accs = finetune(
-                        model, 
-                        dataloader, 
-                        num_classes, 
-                        device=device
-                    )
-                    mean, std = statistic_results_single_epoch(epoch, test_accs, logger, folds, detail=False)
-                    
-                    if mean > best_acc:
-                        best_acc, best_acc_std, best_acc_epoch = mean, std, epoch
-            logger.info(f"=============== Final Result ===============")
-            logger.info(f"Best 10-fold Result: acc={best_acc:.4f} , std={best_acc_std:.4f} , epoch={best_acc_epoch:03d}\n")
-            accs.append(best_acc)
-            acc_epochs.append(best_acc_epoch)
-        
-        mean, std = np.mean(accs), np.std(accs)
-        logger.info(f"=============== Result of Multiple Experiment ===============")
-        logger.info(f"All Results: accs={[round(a, 4) for a in accs]} , epochs={acc_epochs}")
-        logger.info(f"Average Result: acc={mean:.4f} , std={std:.4f}")
+    # Multiple Experiment: K-Fold Finetune and Test
+    accs, acc_epochs = [], []
+    if args.num_repeat_exp > 1:
+        seeds = random.sample(list(range(100000)), args.num_repeat_exp)
+    else:
+        seeds = [random_seed]
+    for seed in seeds:
+        logger.info(f"=============== Seed {seed} ===============")
+        set_random_seed(seed)
+        best_acc, best_acc_std, best_acc_epoch = 0.0, 0.0, -1
+        for root, dirs, files in os.walk(save_dir):
+            epochs = sorted([int(os.path.splitext(f)[0].replace("epoch", "")) for f in files if f.endswith(".pt")])
+            for epoch in epochs:
+                model.load_state_dict(torch.load(os.path.join(save_dir, f"epoch{epoch}.pt")))
+
+                # finetune, test and statistic
+                test_accs = finetune(
+                    model=model, 
+                    dataloader=dataloader, 
+                    num_classes=num_classes, 
+                    mlp_num_layers=args.mlp_num_layers, 
+                    mlp_hidden_dim=args.mlp_hidden_dim, 
+                    folds=folds, 
+                    learning_rate=args.finetune_lr, 
+                    weight_decay=args.finetune_wd, 
+                    max_epochs=args.finetune_max_epochs, 
+                    device=device
+                )
+                mean, std = statistic_results_single_epoch(epoch, test_accs, logger, folds, detail=False)
+                
+                if mean > best_acc:
+                    best_acc, best_acc_std, best_acc_epoch = mean, std, epoch
+        logger.info(f"=============== Final Result ===============")
+        logger.info(f"Best 10-fold Result: acc={best_acc:.4f} , std={best_acc_std:.4f} , epoch={best_acc_epoch:03d}\n")
+        accs.append(best_acc)
+        acc_epochs.append(best_acc_epoch)
+    
+    mean, std = np.mean(accs), np.std(accs)
+    logger.info(f"=============== Result of Multiple Experiment ===============")
+    logger.info(f"All Results: accs={[round(a, 4) for a in accs]} , epochs={acc_epochs}")
+    logger.info(f"Average Result: acc={mean:.4f} , std={std:.4f}")
 

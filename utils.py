@@ -30,18 +30,36 @@ class ExpLogger:
 
 
 def get_args():
+    aug_type_choices = ["renorm_rc", "renorm_rc_rr", "renorm_rc_prob", "mix_sep"]
     parser = argparse.ArgumentParser()
+    # base environment
+    parser.add_argument("--random_seed", type=int, default=42)
+    parser.add_argument("--cpu", action="store_true")
+    # data setting
     parser.add_argument("--data", type=str, default="MUTAG")
     parser.add_argument("--batch_size", type=int, default=128)
-    parser.add_argument("--random_seed", type=int, default=12306)
-    parser.add_argument("--cpu", action="store_true")
-    parser.add_argument("--aug_type", type=str, default="renorm_rc")
+    parser.add_argument("--aug_type", type=str, default="renorm_rc", choices=aug_type_choices, help=f"type of augment method, seleted from {aug_type_choices}")
     parser.add_argument("--aug_num", type=int, default=2)
-    parser.add_argument("--alpha", type=float, default=0.1)
-    parser.add_argument("--epoch", type=int, default=100)
-    parser.add_argument("--folds", type=int, default=10)
+    # model setting
+    parser.add_argument("--gconv_num_layers", type=int, default=2)
+    parser.add_argument("--gconv_hidden_dim", type=int, default=64)
+    parser.add_argument("--mlp_num_layers", type=int, default=2)
+    parser.add_argument("--mlp_hidden_dim", type=int, default=64)
+    # loss setting
+    parser.add_argument("--alpha", type=float, default=0.1, help="weight of gaussian noise of fractal dimension")
+    parser.add_argument("--temperature", type=float, default=0.4)
+    parser.add_argument("--sigma", type=float, default=0.1)
+    # training setting
     parser.add_argument("--save_dir", type=str, default="save_model")
+    parser.add_argument("--pretrain_max_epochs", type=int, default=100)
+    parser.add_argument("--pretrain_lr", type=float, default=0.01)
+    parser.add_argument("--pretrain_wd", type=float, default=0.0)
+    parser.add_argument("--finetune_max_epochs", type=int, default=100)
+    parser.add_argument("--finetune_lr", type=float, default=0.001)
+    parser.add_argument("--finetune_wd", type=float, default=1e-5)
     parser.add_argument("--force_train", action="store_true")
+    parser.add_argument("--folds", type=int, default=10)
+    parser.add_argument("--num_repeat_exp", type=int, default=10)
     args = parser.parse_args()
     return args
 
@@ -53,6 +71,7 @@ def set_random_seed(random_seed: int):
     torch.manual_seed(random_seed)  # set seed for cpu
     torch.cuda.manual_seed(random_seed)  # set seed for current gpu
     torch.cuda.manual_seed_all(random_seed)  # set seed for all gpu
+
 
 def statistic_results_single_epoch(epoch: int, accs: List[float], logger: logging.Logger, folds: int = 10, detail: bool = True):
     if detail:
