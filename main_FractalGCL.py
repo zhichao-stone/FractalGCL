@@ -171,10 +171,20 @@ if __name__ == "__main__":
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    for root, dirs, files in os.walk(save_dir):
-        need_train = (len(files) == 0)
+    if not args.force_train:
+        for root, dirs, files in os.walk(save_dir):
+            epochs = sorted([int(os.path.splitext(f)[0].replace("epoch", "")) for f in files if f.endswith(".pt")])
+            need_train = (len(epochs) == 0) or (epochs[-1] < args.pretrain_max_epochs)
+            save_model_file_name = f"epoch{epochs[-1]}.pt" if epochs else ""
+            current_epoch = epochs[-1] if epochs else 0
+    else:
+        need_train = True
+        current_epoch, save_model_file_name = 0, ""
 
-    if need_train or args.force_train:
+    if need_train:
+        if save_model_file_name:
+            model.load_state_dict(torch.load(os.path.join(save_dir, save_model_file_name)))
+
         augmentor = FractalAugmentor(
             drop_ratio=0.2, 
             aug_fractal_threshold=0.95, 
@@ -182,14 +192,14 @@ if __name__ == "__main__":
             device=device
         )
         pure_dataloader = DataLoader(tudataset, batch_size=batch_size)
-        
+
         loss_fn = FractalGCLLoss(temperature=args.temperature, alpha=args.alpha, sigma=args.sigma)
         optimizer = optim.Adam(model.parameters(), lr=args.pretrain_lr, weight_decay=args.pretrain_wd)
 
         epoch_accs = []
         max_epochs = args.pretrain_max_epochs
-        with tqdm(total=max_epochs, desc="pretrain") as pbar:
-            for epoch in range(1, max_epochs+1):
+        with tqdm(total=max_epochs-current_epoch, desc="pretrain") as pbar:
+            for epoch in range(current_epoch+1, max_epochs+1):
                 st = time.time()
                 loss = train(model, dataloader, optimizer, augmentor, aug_type, loss_fn, device, aug_num=args.aug_num)
                 pbar.set_postfix({"loss": round(loss, 4), "time": round(time.time() - st, 2)})

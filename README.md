@@ -36,7 +36,10 @@ CUDA_VISIBLE_DEVICES=[GPU_IDS] python main_FractalGCL.py \
 	--data TU_DATA[MUTAG, DD, ...] \
 	--batch_size 128 \
 	--aug_type renorm_rc \
-	--epoch 100
+	--pretrain_max_epochs 100 \
+	--folds 10
 ```
+
+The detail arguments can be seen in the function  `./utils.py/get_args()`
 
 The results will be saved in `./log/FractalGCL_{DATA}_{AUG_TYPE}.log`
