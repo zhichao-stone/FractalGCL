@@ -139,7 +139,11 @@ if __name__ == "__main__":
     aug_type = args.aug_type
     batch_size: int = args.batch_size
     data_name = str(args.data).upper()
-    logger = ExpLogger(name=f"FractalGCL_{data_name}_{aug_type}").get_logger()
+    model_name = f"FractalGCL_{data_name}_{aug_type}"
+    model_post_fix = args.postfix
+    if model_post_fix:
+        model_name += f"_{model_post_fix}"
+    logger = ExpLogger(name=model_name).get_logger()
 
     logger.info(f"Training FractalGCL on {data_name} with {aug_type}, {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
@@ -167,7 +171,7 @@ if __name__ == "__main__":
     ).to(device)
 
     # Pretrain
-    save_dir = os.path.join(args.save_dir, f"FractalGCL_{data_name}_{aug_type}")
+    save_dir = os.path.join(args.save_dir, model_name)
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -186,9 +190,9 @@ if __name__ == "__main__":
             model.load_state_dict(torch.load(os.path.join(save_dir, save_model_file_name)))
 
         augmentor = FractalAugmentor(
-            drop_ratio=0.2, 
-            aug_fractal_threshold=0.95, 
-            renorm_min_edges=1, 
+            drop_ratio=args.aug_ratio, 
+            aug_fractal_threshold=args.aug_threshold, 
+            renorm_min_edges=args.renorm_min_edges, 
             device=device
         )
         pure_dataloader = DataLoader(tudataset, batch_size=batch_size)

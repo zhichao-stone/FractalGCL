@@ -40,7 +40,11 @@ def get_args():
     parser.add_argument("--batch_size", type=int, default=128, help="batch size for loading data")
     parser.add_argument("--aug_type", type=str, default="renorm_rc", choices=aug_type_choices, help=f"type of augment method, seleted from {aug_type_choices}")
     parser.add_argument("--aug_num", type=int, default=2, choices=[1, 2], help="num of augmented graphs, either 1 or 2.")
+    parser.add_argument("--aug_ratio", type=float, default=0.2, help="drop ratio for default augmentation (drop node)")
+    parser.add_argument("--aug_threshold", type=float, default=0.95, help="threshold of fractal r2 for renormalization")
+    parser.add_argument("--renorm_min_edges", type=int, default=1, help="the minimum edge num to be regard as edge between supernodes when renormalizing")
     # model setting
+    parser.add_argument("--postfix", type=str, default="", help="postfix of model name for better differentiation")
     parser.add_argument("--gconv_num_layers", type=int, default=2, help="num of layers of GConv for features")
     parser.add_argument("--gconv_hidden_dim", type=int, default=64, help="hidden dim of GConv for features")
     parser.add_argument("--mlp_num_layers", type=int, default=2, help="num of layers of MLP for classification")
