@@ -1,5 +1,6 @@
 from tqdm import tqdm
 from typing import List, Tuple
+import numpy as np
 
 import torch
 import torch.nn as nn
@@ -7,7 +8,8 @@ from torch_geometric.data import DataLoader
 
 from GCL.eval import SVMEvaluator
 from sklearn.model_selection import GridSearchCV
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
+from sklearn.metrics import accuracy_score
 
 from .split import *
 
@@ -62,19 +64,34 @@ def test_f1_score_SVC(
 def test_accuracy_SVC(
     model: nn.Module, 
     dataloader: DataLoader, 
-    evaluator = LinearSVC(), 
+    # evaluator = LinearSVC(), 
+    evaluator = SVC(kernel="rbf"), 
     eval_params = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000]}, 
     folds: int = 10, 
     device: torch.device = torch.device("cuda")
 ):
     features, labels = get_features(model, dataloader, device)
 
-    features, labels = [obj.detach().cpu().numpy() for obj in [features, labels]]
-    classifier = GridSearchCV(evaluator, eval_params, cv=folds, scoring="accuracy")
-    classifier.fit(features, labels)
-    acc = float(classifier.best_score_)
+    if folds > 1:
+        splits = k_fold(features.size()[0], folds=folds)
+    else:
+        splits = [split_data(features.size()[0])]
+    
+    accs = []
+    for i in range(folds):
+        split = splits[i].dict()
+        x_train, x_val, x_test, y_train, y_val, y_test = [obj[split[key]].detach().cpu().numpy() for obj in [features, labels] for key in ["train", "valid", "test"]]
+        x_train, y_train = np.concatenate([x_train, x_val], axis=0), np.concatenate([y_train, y_val], axis=0)
+        classifier = GridSearchCV(evaluator, eval_params, cv=5, scoring="accuracy")
+        classifier.fit(x_train, y_train)
+        accs.append(accuracy_score(y_test, classifier.predict(x_test)))
 
-    return acc
+    # features, labels = [obj.detach().cpu().numpy() for obj in [features, labels]]
+    # classifier = GridSearchCV(evaluator, eval_params, cv=folds, scoring="accuracy")
+    # classifier.fit(features, labels)
+    # acc = float(classifier.best_score_)
+
+    return accs
 
 
 def test_accuracy(

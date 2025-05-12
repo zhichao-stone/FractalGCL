@@ -76,3 +76,10 @@ def split_batches(num_samples: int, batch_size: int = 128, shuffle: bool = False
     for i in range(bn):
         batches.append(indices[i*batch_size : (i+1)*batch_size])
     return batches
+
+
+def semi_split(num_samples: int, semi_ratio: float = 0.1) -> List[int]:
+    semi_num = int(num_samples * semi_ratio)
+    indices = list(range(num_samples))
+    random.shuffle(indices)
+    return indices[:semi_num]

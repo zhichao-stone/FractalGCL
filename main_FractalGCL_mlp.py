@@ -19,7 +19,7 @@ from datas.dataload import *
 from datas.aumentation import FractalAugmentor
 from models import GConv, MLP
 from models.loss import *
-from evaluate import k_fold, split_data, split_batches, get_features, test_accuracy_SVC, test_accuracy
+from evaluate import k_fold, split_data, split_batches, semi_split, get_features, test_accuracy_SVC, test_accuracy
 from utils import *
 
 
@@ -97,6 +97,7 @@ def finetune(
     learning_rate: float = 0.001, 
     weight_decay: float = 1e-5, 
     max_epochs: int = 100, 
+    semi_ratio: float = 1.0, 
     device: torch.device = torch.device("cuda")
 ):
     # get features
@@ -145,7 +146,7 @@ if __name__ == "__main__":
         model_name += f"_{model_post_fix}"
     logger = ExpLogger(name=model_name).get_logger()
 
-    logger.info(f"Training FractalGCL on {data_name} with {aug_type}, {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info(f"Training FractalGCL on {data_name} with {aug_type}{' and ' + model_post_fix if model_post_fix else ''}, {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     # random setting
     random_seed = args.random_seed
@@ -209,7 +210,8 @@ if __name__ == "__main__":
                 pbar.set_postfix({"loss": round(loss, 4), "time": round(time.time() - st, 2)})
 
                 if epoch % 5 == 0:
-                    test_acc = test_accuracy_SVC(model, pure_dataloader, folds=folds, device=device)
+                    test_accs = test_accuracy_SVC(model, pure_dataloader, folds=folds, device=device)
+                    test_acc = np.mean(test_accs)
                     logger.info(f"# Epoch: {epoch} | test acc: {test_acc:.4f}")
                     epoch_accs.append(test_acc)
                     torch.save(model.state_dict(), os.path.join(save_dir, f"epoch{epoch}.pt"))
@@ -227,8 +229,8 @@ if __name__ == "__main__":
         seeds = random.sample(list(range(100000)), args.num_repeat_exp)
     else:
         seeds = [random_seed]
-    for seed in seeds:
-        logger.info(f"=============== Seed {seed} ===============")
+    for i, seed in enumerate(seeds):
+        logger.info(f"=============== Seed{i+1} {seed} ===============")
         set_random_seed(seed)
         best_acc, best_acc_std, best_acc_epoch = 0.0, 0.0, -1
         for root, dirs, files in os.walk(save_dir):

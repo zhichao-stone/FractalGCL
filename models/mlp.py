@@ -36,6 +36,7 @@ class MLP(nn.Module):
 
             for _ in range(num_layers - 1):
                 self.batch_norms.append(nn.BatchNorm1d(hidden_dim))
+        self.dropout = nn.Dropout(p=0.3)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if self.is_linear:
@@ -43,5 +44,5 @@ class MLP(nn.Module):
         else:
             h = x
             for i in range(self.num_layers - 1):
-                h = F.relu(self.batch_norms[i](self.linears[i](h)))
+                h = F.relu(self.dropout(self.batch_norms[i](self.linears[i](h))))
             return self.linears[-1](h)

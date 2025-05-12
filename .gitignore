@@ -3,3 +3,4 @@ datasets/*
 zz_*
 results/*
 *.xlsx
+sh_files/*
