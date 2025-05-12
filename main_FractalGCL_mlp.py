@@ -7,7 +7,6 @@ import time
 import numpy as np
 from tqdm import tqdm
 from datetime import datetime
-from typing import List, Tuple
 
 import torch
 import torch.nn as nn
@@ -19,7 +18,7 @@ from datas.dataload import *
 from datas.aumentation import FractalAugmentor
 from models import GConv, MLP
 from models.loss import *
-from evaluate import k_fold, split_data, split_batches, semi_split, get_features, test_accuracy_SVC, test_accuracy
+from evaluate import k_fold, split_data, split_batches, get_features, test_accuracy_SVC, test_accuracy
 from utils import *
 
 
