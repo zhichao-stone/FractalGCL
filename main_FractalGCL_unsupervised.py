@@ -130,7 +130,7 @@ if __name__ == "__main__":
         loss_fn = FractalGCLLoss(temperature=args.temperature, alpha=args.alpha, sigma=args.sigma)
         optimizer = optim.Adam(model.parameters(), lr=args.pretrain_lr, weight_decay=args.pretrain_wd)
 
-        epoch_accs = []
+        # epoch_accs = []
         max_epochs = args.pretrain_max_epochs
         with tqdm(total=max_epochs-current_epoch, desc="pretrain") as pbar:
             for epoch in range(current_epoch+1, max_epochs+1):
@@ -139,18 +139,18 @@ if __name__ == "__main__":
                 pbar.set_postfix({"loss": round(loss, 4), "time": round(time.time() - st, 2)})
 
                 if epoch % 5 == 0:
-                    test_accs = test_accuracy_SVC(model, pure_dataloader, folds=folds, device=device)
-                    text_acc = np.mean(test_accs)
-                    logger.info(f"# Epoch: {epoch} | test acc: {text_acc:.4f}")
-                    epoch_accs.append(text_acc)
+                    # test_accs = test_accuracy_SVC(model, pure_dataloader, folds=folds, device=device)
+                    # text_acc = np.mean(test_accs)
+                    # logger.info(f"# Epoch: {epoch} | test acc: {text_acc:.4f}")
+                    # epoch_accs.append(text_acc)
                     torch.save(model.state_dict(), os.path.join(save_dir, f"epoch{epoch}.pt"))
 
                 pbar.update()
                 
         torch.save(model.state_dict(), os.path.join(save_dir, f"epoch{epoch}.pt"))
-        best_epoch, best_acc = max(enumerate(epoch_accs), key=lambda x:x[1])
-        best_epoch = (best_epoch + 1) * 5
-        logger.info(f"# Final Results: {best_acc:.4f} , epoch={best_epoch:3d}\n\n")
+        # best_epoch, best_acc = max(enumerate(epoch_accs), key=lambda x:x[1])
+        # best_epoch = (best_epoch + 1) * 5
+        # logger.info(f"# Final Results: {best_acc:.4f} , epoch={best_epoch:3d}\n\n")
 
     # Multiple Experiment: K-Fold Finetune and Test
     accs, acc_epochs = [], []

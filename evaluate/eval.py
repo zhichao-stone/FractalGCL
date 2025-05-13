@@ -8,7 +8,7 @@ from torch_geometric.data import DataLoader
 
 from GCL.eval import SVMEvaluator
 from sklearn.model_selection import GridSearchCV
-from sklearn.svm import LinearSVC, SVC
+from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
 from .split import *
@@ -64,7 +64,6 @@ def test_f1_score_SVC(
 def test_accuracy_SVC(
     model: nn.Module, 
     dataloader: DataLoader, 
-    # evaluator = LinearSVC(), 
     evaluator = SVC(kernel="rbf"), 
     eval_params = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000]}, 
     folds: int = 10, 

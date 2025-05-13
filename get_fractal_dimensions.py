@@ -198,7 +198,10 @@ if __name__ == "__main__":
     parser.add_argument("--renew", action="store_true")
     args = parser.parse_args()
     DATA = str(args.data).upper()
-    save_path = os.path.join("fractal_results", f"linear_regression_{DATA.lower()}.json")
+    save_dir = "fractal_results"
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    save_path = os.path.join(save_dir, f"linear_regression_{DATA.lower()}.json")
 
     if not os.path.exists(save_path) or args.renew:
         root = os.path.join(os.path.expanduser("~"), "datasets")
@@ -228,8 +231,14 @@ if __name__ == "__main__":
     total = len(regression_results)
     is_fractal_num = 0
     r2_distribution = {f"{k*0.05:.2f}": 0 for k in range(1, 20)}
+    diameter_distribution = {}
     for r in regression_results:
         res = r["Linear Regression"]["Origin Graph"]
+        d = r["Statistics of Graph"]["Diameter"]
+        if d not in diameter_distribution:
+            diameter_distribution[d] = 1
+        else:
+            diameter_distribution[d] += 1
         if "R²" in res:
             is_fractal_num += 1
             r2_interval = int(abs(res["R²"]) / 0.05)
@@ -238,6 +247,22 @@ if __name__ == "__main__":
             for k in range(1, r2_interval+1):
                 r2_distribution[f"{k*0.05:.2f}"] += 1
     
+    statistic = {
+        "total graphs": total, 
+        "proportion of fractal graphs": f"num={is_fractal_num} | proportion={is_fractal_num/total:.2%}", 
+        "fractality distribution": {
+            f">= {k}": f"num={v} | proportion={v/total:.2%}" for k, v in r2_distribution.items()
+        }, 
+        "diameter distribution": {
+            k: f"num={v} | proportion={v/total:.2%}" for k, v in diameter_distribution.items()
+        }
+    }
+    statistic_dir = os.path.join("fractal_results", "statistic")
+    if not os.path.exists(statistic_dir):
+        os.makedirs(statistic_dir)
+    with open(os.path.join(statistic_dir, f"statistic_{DATA.lower()}.json"), "w", encoding="utf-8") as fw:
+        json.dump(statistic, fw, ensure_ascii=False, indent=4)
+
     print("=============== Statistic of Fractality ===============")
     print(f"# Proportion of Fractal Graphs: {is_fractal_num} / {total} = {is_fractal_num/total:.2%}")
     print(f"# Fractality Distribution:")
