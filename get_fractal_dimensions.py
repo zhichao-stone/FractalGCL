@@ -250,11 +250,12 @@ if __name__ == "__main__":
     statistic = {
         "total graphs": total, 
         "proportion of fractal graphs": f"num={is_fractal_num} | proportion={is_fractal_num/total:.2%}", 
+        "help": "The following distribution's format: \"Key: Number | Proportion\"", 
         "fractality distribution": {
-            f">= {k}": f"num={v} | proportion={v/total:.2%}" for k, v in r2_distribution.items()
+            f">= {k}": f"{v:4d} | {v/total:.2%}" for k, v in r2_distribution.items()
         }, 
         "diameter distribution": {
-            k: f"num={v} | proportion={v/total:.2%}" for k, v in diameter_distribution.items()
+            f"{k:3d}": f"{diameter_distribution[k]:4d} | {diameter_distribution[k]/total:.2%}" for k in sorted(list(diameter_distribution.keys()))
         }
     }
     statistic_dir = os.path.join("fractal_results", "statistic")
@@ -263,9 +264,10 @@ if __name__ == "__main__":
     with open(os.path.join(statistic_dir, f"statistic_{DATA.lower()}.json"), "w", encoding="utf-8") as fw:
         json.dump(statistic, fw, ensure_ascii=False, indent=4)
 
-    print("=============== Statistic of Fractality ===============")
+    print(f"=============== Statistic of Fractality of {DATA.upper()} ===============")
     print(f"# Proportion of Fractal Graphs: {is_fractal_num} / {total} = {is_fractal_num/total:.2%}")
     print(f"# Fractality Distribution:")
     for k, v in r2_distribution.items():
         print(f"\t>= {k} : {v:4d} / {total} = {v/total:.2%}")
+    print()
 
