@@ -7,6 +7,7 @@ import time
 import numpy as np
 from tqdm import tqdm
 from datetime import datetime
+from typing import Union, Tuple
 
 import torch
 import torch.optim as optim
@@ -15,23 +16,47 @@ from torch_geometric.datasets import TUDataset
 
 from datas.dataload import *
 from datas.aumentation import FractalAugmentor
-from models import GConv
+from models import GConv, ConcatModel
 from models.loss import *
 from evaluate import test_accuracy_SVC
 from utils import *
 
 
 
+class AdditionalRequirements:
+    def __init__(self, args) -> None:
+        self.concat_embedding = args.concat_embedding
+        self.sum_embeddding = args.sum_embedding
+        self.concat_graph = args.concat_graph
+        self.compute_dimension = args.compute_dimension
+
+
+def concat_graph(
+    x1: torch.Tensor, edge_index1: torch.Tensor, batch1: torch.Tensor, 
+    x2: torch.Tensor, edge_index2: torch.Tensor, batch2: torch.Tensor, 
+    device: torch.device = torch.device("cuda")
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    bs1, bs2 = int(max(batch1)) + 1, int(max(batch2)) + 1
+    assert bs1 == bs2
+    ns1 = int(x1.size(0))
+    x1, x2 = x1.to(device), x2.to(device)
+    edge_index1, edge_index2 = edge_index1.to(device), edge_index2.to(device)
+    batch1, batch2 = batch1.to(device), batch2.to(device)
+    x = torch.cat([x1, x2], dim=0)
+    edge_index = torch.cat([edge_index1, edge_index2 + ns1], dim=-1)
+    batch = torch.cat([batch1, batch2], dim=-1)
+    return x, edge_index, batch
+
 def train(
-    model: GConv, 
+    model: Union[GConv, ConcatModel], 
     dataloader: DataLoader, 
     optimizer: optim.Optimizer, 
     augmentor: FractalAugmentor, 
     aug_type: str, 
     loss_fn: FractalGCLLoss, 
+    requirements: AdditionalRequirements, 
     device: torch.device = torch.device("cuda"), 
-    aug_num: int = 2, 
-    compute_dimension: bool = False, 
+    aug_num: int = 2
 ):
     model.train()
     epoch_loss = 0.0
@@ -43,18 +68,31 @@ def train(
 
         optimizer.zero_grad()
         if aug_num == 2:
-            aug_graphs, aug_dimesions, aug_diameters = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, compute_dimension)
+            aug_graphs, aug_dimesions, aug_diameters = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, requirements.compute_dimension)
             (x1, edge_index1, batch1), (x2, edge_index2, batch2) = aug_graphs
             aug_dims1, aug_dims2 = aug_dimesions
             aug_d1, aug_d2 = aug_diameters
         else:
             x1, edge_index1, batch1, aug_dims1, aug_d1 = data.x, data.edge_index, data.batch, dimensions, diameters
-            aug_graphs, aug_dimesions = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, compute_dimension)
+            aug_graphs, aug_dimesions = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, requirements.compute_dimension)
             x2, edge_index2, batch2 = aug_graphs[0]
             aug_dims2, aug_d2 = aug_dimesions[0], aug_diameters[0]
 
-        g1 = model(x1, edge_index1, batch1, project=True)
-        g2 = model(x2, edge_index2, batch2, project=True)
+        if requirements.concat_graph:
+            x1, edge_index1, batch1 = concat_graph(x1, edge_index1, batch1, data.x, data.edge_index, data.batch, device)
+            x2, edge_index2, batch2 = concat_graph(x2, edge_index2, batch2, data.x, data.edge_index, data.batch, device)
+        
+        if requirements.concat_embedding:
+            g1 = model(x1, edge_index1, batch1, data.x, data.edge_index, data.batch)
+            g2 = model(x2, edge_index2, batch2, data.x, data.edge_index, data.batch)
+        else:
+            g1 = model(x1, edge_index1, batch1, project=True)
+            g2 = model(x2, edge_index2, batch2, project=True)
+
+            if requirements.sum_embeddding:
+                g = model(data.x, data.edge_index, data.batch, project=True)
+                g1 = g1 + g
+                g2 = g2 + g
 
         loss = loss_fn(g1, g2, aug_dims1, aug_dims2, aug_d1, aug_d2)
         loss.backward()
@@ -64,7 +102,6 @@ def train(
         epoch_loss += loss.item()
 
     return epoch_loss
-
 
 
 if __name__ == "__main__":
@@ -100,11 +137,18 @@ if __name__ == "__main__":
     # model
     gconv_num_layers = args.gconv_num_layers
     gconv_hidden_dim = args.gconv_hidden_dim
-    model = GConv(
-        input_dim=input_dim, 
-        hidden_dim=gconv_hidden_dim, 
-        num_layers=gconv_num_layers
-    ).to(device)
+    if args.concat_embedding:
+        model = ConcatModel(
+            input_dim=input_dim, 
+            hidden_dim=gconv_hidden_dim, 
+            num_layers=gconv_num_layers
+        ).to(device)
+    else:
+        model = GConv(
+            input_dim=input_dim, 
+            hidden_dim=gconv_hidden_dim, 
+            num_layers=gconv_num_layers
+        ).to(device)
 
     # Pretrain
     save_dir = os.path.join(args.save_dir, model_name)
@@ -124,6 +168,8 @@ if __name__ == "__main__":
     if need_train:
         if save_model_file_name:
             model.load_state_dict(torch.load(os.path.join(save_dir, save_model_file_name)))
+
+        requirements = AdditionalRequirements(args)
 
         augmentor = FractalAugmentor(
             drop_ratio=args.aug_ratio, 
@@ -149,9 +195,9 @@ if __name__ == "__main__":
                     augmentor, 
                     aug_type, 
                     loss_fn, 
-                    device, 
-                    aug_num=args.aug_num, 
-                    compute_dimension=args.compute_dimension
+                    requirements=requirements,  
+                    device=device, 
+                    aug_num=args.aug_num 
                 )
                 epoch_time_cost = time.time() - st
                 time_cost += epoch_time_cost
@@ -188,7 +234,10 @@ if __name__ == "__main__":
                 model.load_state_dict(torch.load(os.path.join(save_dir, f"epoch{epoch}.pt")))
 
                 # finetune, test and statistic
-                test_accs = test_accuracy_SVC(model, dataloader, folds=folds, device=device)
+                if args.concat_embedding:
+                    test_accs = test_accuracy_SVC(model.gconv, dataloader, folds=folds, device=device)
+                else:
+                    test_accs = test_accuracy_SVC(model, dataloader, folds=folds, device=device)
                 mean, std = statistic_results_single_epoch(epoch, test_accs, logger, folds, detail=False)
                 
                 if mean > best_acc:

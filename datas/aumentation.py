@@ -65,7 +65,8 @@ class FractalAugmentor:
         drop_ratio: float = 0.2, 
         aug_fractal_threshold: float = 0.95, 
         renorm_min_edges: int = 1, 
-        device: torch.device = torch.device("cuda")
+        device: torch.device = torch.device("cuda"), 
+        concat_graph: bool = False
     ) -> None:
         self.drop_ratio = drop_ratio
         self.aug_fractal_threshold = aug_fractal_threshold
@@ -84,7 +85,8 @@ class FractalAugmentor:
             edges.append(batch_edge_index[i] + bias)
             batches.append((torch.ones(graph_size) * i).long().to(self.device))
             bias += graph_size
-        x, edge_index, batch = torch.cat(batch_x, dim=0), torch.cat(edges, dim=-1), torch.cat(batches, dim=-1)
+        x:torch.Tensor = torch.cat(batch_x, dim=0)
+        edge_index, batch = torch.cat(edges, dim=-1), torch.cat(batches, dim=-1)
         return x.to(self.device), edge_index.to(self.device), batch.to(self.device)
 
     def split_batch(self, x: torch.FloatTensor, edge_index: torch.LongTensor, batch: torch.Tensor, batch_size: int):

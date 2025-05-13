@@ -30,7 +30,7 @@ class ExpLogger:
 
 
 def get_args():
-    aug_type_choices = ["renorm_rc", "renorm_rc_rr", "renorm_rc_prob", "mix_sep"]
+    aug_type_choices = ["renorm_rc", "renorm_rc_rr", "renorm_rc_prob", "mix_sep", "drop_node", "simple_random_walk"]
     parser = argparse.ArgumentParser()
     # base environment
     parser.add_argument("--random_seed", type=int, default=42, help="random seed for training")
@@ -41,15 +41,18 @@ def get_args():
     parser.add_argument("--aug_type", type=str, default="renorm_rc", choices=aug_type_choices, help=f"type of augment method, seleted from {aug_type_choices}")
     parser.add_argument("--aug_num", type=int, default=2, choices=[1, 2], help="num of augmented graphs, either 1 or 2.")
     parser.add_argument("--aug_ratio", type=float, default=0.2, help="drop ratio for default augmentation (drop node)")
-    parser.add_argument("--aug_threshold", type=float, default=0.95, help="threshold of fractal r2 for renormalization")
+    parser.add_argument("--aug_threshold", type=float, default=0.9, help="threshold of fractal r2 for renormalization")
     parser.add_argument("--renorm_min_edges", type=int, default=1, help="the minimum edge num to be regard as edge between supernodes when renormalizing")
     parser.add_argument("--compute_dimension", action="store_true", help="whether to compute real dimension of augmented graphs")
+    parser.add_argument("--concat_graph", action="store_true")
     # model setting
     parser.add_argument("--postfix", type=str, default="", help="postfix of model name for better differentiation")
     parser.add_argument("--gconv_num_layers", type=int, default=2, help="num of layers of GConv for features")
     parser.add_argument("--gconv_hidden_dim", type=int, default=64, help="hidden dim of GConv for features")
     parser.add_argument("--mlp_num_layers", type=int, default=2, help="num of layers of MLP for classification")
     parser.add_argument("--mlp_hidden_dim", type=int, default=64, help="hidden dim of MLP for classification")
+    parser.add_argument("--sum_embedding", action="store_true")
+    parser.add_argument("--concat_embedding", action="store_true")
     # loss setting
     parser.add_argument("--alpha", type=float, default=0.1, help="weight of gaussian noise of fractal dimension")
     parser.add_argument("--temperature", type=float, default=0.4, help="temperature of loss function")
