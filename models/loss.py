@@ -36,24 +36,20 @@ class FractalGCLLoss(GCLLoss):
         self.alpha = alpha
         self.sigma = sigma
 
-    def gaussian_box_dimension_random_matrix(self, dimensions: torch.Tensor, diameters: torch.Tensor):
-        tau2 = np.zeros(dimensions.size())
-        for i, d in enumerate(diameters):
-            D = max(d, 2)
-            tau2[i] = (6*(self.sigma**2) / (D*(np.log(D)**2)))
+    def gaussian_box_dimension_random_matrix(self, dimensions1: torch.Tensor, dimensions2: torch.Tensor, diameters1: torch.Tensor, diameters2: torch.Tensor):
+        d1, d2 = np.maximum(diameters1.detach().cpu().numpy(), 2), np.maximum(diameters2.detach().cpu().numpy(), 2)
+        dims1, dims2 = dimensions1.detach().cpu().numpy(), dimensions2.detach().cpu().numpy()
+        tau21, tau22 = 6*(self.sigma**2) / (d1 * (np.log(d1) ** 2)), 6*(self.sigma**2) / (d2 * (np.log(d2) ** 2))
         
-        dims = dimensions.numpy()
-        
-        mu = np.abs(dims[:, None] - dims[None, :])
-        std = np.sqrt(tau2[:, None] + tau2[None, :])
-        # G_noise = np.random.normal(loc=mu, scale=std) / np.maximum.outer(dims, dims)
+        mu = np.abs(dims1[:, None] - dims2[None, :])
+        std = np.sqrt(tau21[:, None] + tau22[None, :])
         G_noise = np.random.normal(loc=mu, scale=std)
         return torch.from_numpy(G_noise)
 
-    def __call__(self, v1: torch.Tensor, v2: torch.Tensor, dimensions: torch.Tensor, diameters: torch.Tensor, **kwargs) -> torch.Tensor:
+    def __call__(self, v1: torch.Tensor, v2: torch.Tensor, dimensions1: torch.Tensor, dimensions2: torch.Tensor, diameters1: torch.Tensor, diameters2: torch.Tensor, **kwargs) -> torch.Tensor:
         sim = torch.matmul(F.normalize(v1), F.normalize(v2).T) / self.temperature
         if self.alpha > 0:
-            noise = self.gaussian_box_dimension_random_matrix(dimensions, diameters).to(sim.device)
+            noise = self.gaussian_box_dimension_random_matrix(dimensions1, dimensions2, diameters1, diameters2).to(sim.device)
             sim = sim + self.alpha * noise
 
         sim = torch.exp(sim)

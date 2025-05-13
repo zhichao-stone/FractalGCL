@@ -9,7 +9,6 @@ from tqdm import tqdm
 from datetime import datetime
 
 import torch
-import torch.nn as nn
 import torch.optim as optim
 from torch_geometric.data import DataLoader
 from torch_geometric.datasets import TUDataset
@@ -31,7 +30,8 @@ def train(
     aug_type: str, 
     loss_fn: FractalGCLLoss, 
     device: torch.device = torch.device("cuda"), 
-    aug_num: int = 2
+    aug_num: int = 2, 
+    compute_dimension: bool = False, 
 ):
     model.train()
     epoch_loss = 0.0
@@ -43,14 +43,20 @@ def train(
 
         optimizer.zero_grad()
         if aug_num == 2:
-            (x1, edge_index1, batch1), (x2, edge_index2, batch2) = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, gids, aug_type, aug_num)
+            aug_graphs, aug_dimesions, aug_diameters = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, compute_dimension)
+            (x1, edge_index1, batch1), (x2, edge_index2, batch2) = aug_graphs
+            aug_dims1, aug_dims2 = aug_dimesions
+            aug_d1, aug_d2 = aug_diameters
         else:
-            x1, edge_index1, batch1 = data.x, data.edge_index, data.batch
-            x2, edge_index2, batch2 = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, gids, aug_type, aug_num)[0]
+            x1, edge_index1, batch1, aug_dims1, aug_d1 = data.x, data.edge_index, data.batch, dimensions, diameters
+            aug_graphs, aug_dimesions = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, compute_dimension)
+            x2, edge_index2, batch2 = aug_graphs[0]
+            aug_dims2, aug_d2 = aug_dimesions[0], aug_diameters[0]
+
         g1 = model(x1, edge_index1, batch1, project=True)
         g2 = model(x2, edge_index2, batch2, project=True)
 
-        loss = loss_fn(g1, g2, dimensions, diameters)
+        loss = loss_fn(g1, g2, aug_dims1, aug_dims2, aug_d1, aug_d2)
         loss.backward()
 
         optimizer.step()
@@ -131,12 +137,25 @@ if __name__ == "__main__":
         optimizer = optim.Adam(model.parameters(), lr=args.pretrain_lr, weight_decay=args.pretrain_wd)
 
         # epoch_accs = []
+        time_cost = 0.0
         max_epochs = args.pretrain_max_epochs
         with tqdm(total=max_epochs-current_epoch, desc="pretrain") as pbar:
             for epoch in range(current_epoch+1, max_epochs+1):
                 st = time.time()
-                loss = train(model, dataloader, optimizer, augmentor, aug_type, loss_fn, device, aug_num=args.aug_num)
-                pbar.set_postfix({"loss": round(loss, 4), "time": round(time.time() - st, 2)})
+                loss = train(
+                    model, 
+                    dataloader, 
+                    optimizer, 
+                    augmentor, 
+                    aug_type, 
+                    loss_fn, 
+                    device, 
+                    aug_num=args.aug_num, 
+                    compute_dimension=args.compute_dimension
+                )
+                epoch_time_cost = time.time() - st
+                time_cost += epoch_time_cost
+                pbar.set_postfix({"loss": round(loss, 4), "time": round(epoch_time_cost, 2)})
 
                 if epoch % 5 == 0:
                     # test_accs = test_accuracy_SVC(model, pure_dataloader, folds=folds, device=device)
@@ -146,6 +165,7 @@ if __name__ == "__main__":
                     torch.save(model.state_dict(), os.path.join(save_dir, f"epoch{epoch}.pt"))
 
                 pbar.update()
+        logger.info(f"# Pretraining Time Cost: {time_cost} s")
                 
         torch.save(model.state_dict(), os.path.join(save_dir, f"epoch{epoch}.pt"))
         # best_epoch, best_acc = max(enumerate(epoch_accs), key=lambda x:x[1])

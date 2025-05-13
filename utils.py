@@ -43,6 +43,7 @@ def get_args():
     parser.add_argument("--aug_ratio", type=float, default=0.2, help="drop ratio for default augmentation (drop node)")
     parser.add_argument("--aug_threshold", type=float, default=0.95, help="threshold of fractal r2 for renormalization")
     parser.add_argument("--renorm_min_edges", type=int, default=1, help="the minimum edge num to be regard as edge between supernodes when renormalizing")
+    parser.add_argument("--compute_dimension", action="store_true", help="whether to compute real dimension of augmented graphs")
     # model setting
     parser.add_argument("--postfix", type=str, default="", help="postfix of model name for better differentiation")
     parser.add_argument("--gconv_num_layers", type=int, default=2, help="num of layers of GConv for features")
@@ -63,7 +64,7 @@ def get_args():
     parser.add_argument("--finetune_wd", type=float, default=1e-5, help="weight decay of finetuning")
     parser.add_argument("--force_train", action="store_true", help="whether to force pretraining, even when there are saved model")
     parser.add_argument("--folds", type=int, default=10, help="k of k-fold cross validation")
-    parser.add_argument("--num_repeat_exp", type=int, default=10, help="num of repeated experiment")
+    parser.add_argument("--num_repeat_exp", type=int, default=5, help="num of repeated experiment")
     args = parser.parse_args()
     return args
 
