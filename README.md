@@ -32,12 +32,13 @@ The results will be saved in `./fractal_results/linear_regression_{DATA}.json`. 
 #### step2. run experiment
 
 ```shell
-CUDA_VISIBLE_DEVICES=[GPU_IDS] python main_FractalGCL.py \
+CUDA_VISIBLE_DEVICES=[GPU_IDS] python main_FractalGCL_unsupervised.py \
 	--data TU_DATA[MUTAG, DD, ...] \
 	--batch_size 128 \
 	--aug_type renorm_rc \
 	--pretrain_max_epochs 100 \
-	--folds 10
+	--folds 10 \
+	--num_repeat_exp 5
 ```
 
 The detail arguments can be seen in the function  `./utils.py/get_args()`
