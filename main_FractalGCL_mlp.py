@@ -258,12 +258,14 @@ if __name__ == "__main__":
         logger.info(f"=============== Seed{i+1} {seed} ===============")
         set_random_seed(seed)
         best_acc, best_acc_std, best_acc_epoch = 0.0, 0.0, -1
+        test_time_cost = 0.0
         for root, dirs, files in os.walk(save_dir):
             epochs = sorted([int(os.path.splitext(f)[0].replace("epoch", "")) for f in files if f.endswith(".pt")])
             for epoch in epochs:
                 model.load_state_dict(torch.load(os.path.join(save_dir, f"epoch{epoch}.pt")))
 
                 # finetune, test and statistic
+                epoch_st = time.time()
                 test_accs = finetune(
                     model=model, 
                     dataloader=dataloader, 
@@ -276,12 +278,14 @@ if __name__ == "__main__":
                     max_epochs=args.finetune_max_epochs, 
                     device=device
                 )
-                mean, std = statistic_results_single_epoch(epoch, test_accs, logger, folds, detail=False)
-                
+                epoch_time_cost = time.time() - st
+                mean, std = statistic_results_single_epoch(epoch, test_accs, logger, folds, detail=False, time_cost=epoch_time_cost)
+                test_time_cost += epoch_time_cost
                 if mean > best_acc:
                     best_acc, best_acc_std, best_acc_epoch = mean, std, epoch
+
         logger.info(f"=============== Final Result ===============")
-        logger.info(f"Best 10-fold Result: acc={best_acc:.4f} , std={best_acc_std:.4f} , epoch={best_acc_epoch:03d}\n")
+        logger.info(f"Best 10-fold Result: acc={best_acc:.4f} , std={best_acc_std:.4f} , epoch={best_acc_epoch:03d} , time_cost={test_time_cost:.2f} s\n")
         accs.append(best_acc)
         acc_epochs.append(best_acc_epoch)
     

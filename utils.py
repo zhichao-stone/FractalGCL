@@ -87,7 +87,14 @@ def set_random_seed(random_seed: int):
     torch.cuda.manual_seed_all(random_seed)  # set seed for all gpu
 
 
-def statistic_results_single_epoch(epoch: int, accs: List[float], logger: logging.Logger, folds: int = 10, detail: bool = True):
+def statistic_results_single_epoch(
+    epoch: int, 
+    accs: List[float], 
+    logger: logging.Logger, 
+    folds: int = 10, 
+    detail: bool = True, 
+    time_cost: float = None,
+):
     if detail:
         logger.info(f"=============== Epoch {epoch:03d} ===============")
         logger.info(f"# Test Accs of All Folds: {[round(a, 4) for a in accs]}")
@@ -99,10 +106,10 @@ def statistic_results_single_epoch(epoch: int, accs: List[float], logger: loggin
         logger.info(f"Acc Statistic: medium_l={accs[medium_index]:.4f} , medium_r={accs[-medium_index]:.4f} , medium={(accs[medium_index]+accs[-medium_index])/2:.4f}")
         
         mean, std = np.mean(accs), np.std(accs)
-        logger.info(f"Average Accs of {folds} Folds: {mean:.4f}, Std: {std:.4f}\n")
+        logger.info(f"Average Accs of {folds} Folds: {mean:.4f}, Std: {std:.4f}{f', Time: {time_cost:.2f} s' if time_cost else ''}\n")
     else:
         mean, std = np.mean(accs), np.std(accs)
-        logger.info(f"# Epoch: {epoch:03d} | Average Accs of {folds} Folds: {mean:.4f}, Std: {std:.4f}")
+        logger.info(f"# Epoch: {epoch:03d} | Average Accs of {folds} Folds: {mean:.4f}, Std: {std:.4f}{f', Time: {time_cost:.2f} s' if time_cost else ''}")
 
     return mean, std
 
