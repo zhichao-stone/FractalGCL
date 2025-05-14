@@ -7,7 +7,6 @@ import time
 import numpy as np
 from tqdm import tqdm
 from datetime import datetime
-from typing import Tuple
 
 import torch
 import torch.optim as optim
