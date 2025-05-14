@@ -16,7 +16,7 @@ from torch_geometric.datasets import TUDataset
 
 from datas.dataload import *
 from datas.aumentation import FractalAugmentor
-from models import GConv, ConcatModel
+from models import GConv
 from models.loss import *
 from evaluate import test_accuracy_SVC
 from utils import *
@@ -40,7 +40,7 @@ def concat_graph(
     return x, edge_index, batch
 
 def train(
-    model: Union[GConv, ConcatModel], 
+    model: GConv, 
     dataloader: DataLoader, 
     optimizer: optim.Optimizer, 
     augmentor: FractalAugmentor, 
@@ -60,13 +60,13 @@ def train(
 
         optimizer.zero_grad()
         if aug_num == 2:
-            aug_graphs, aug_dimesions, aug_diameters = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, requirements.compute_dimension, requirements.merge_graph)
+            aug_graphs, aug_dimesions, aug_diameters = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, requirements.compute_dimension)
             (x1, edge_index1, batch1), (x2, edge_index2, batch2) = aug_graphs
             aug_dims1, aug_dims2 = aug_dimesions
             aug_d1, aug_d2 = aug_diameters
         else:
             x1, edge_index1, batch1, aug_dims1, aug_d1 = data.x, data.edge_index, data.batch, dimensions, diameters
-            aug_graphs, aug_dimesions = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, requirements.compute_dimension, requirements.merge_graph)
+            aug_graphs, aug_dimesions = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, requirements.compute_dimension)
             x2, edge_index2, batch2 = aug_graphs[0]
             aug_dims2, aug_d2 = aug_dimesions[0], aug_diameters[0]
 
@@ -74,17 +74,13 @@ def train(
             x1, edge_index1, batch1 = concat_graph(x1, edge_index1, batch1, data.x, data.edge_index, data.batch, device)
             x2, edge_index2, batch2 = concat_graph(x2, edge_index2, batch2, data.x, data.edge_index, data.batch, device)
         
-        if requirements.concat_embedding:
-            g1 = model(x1, edge_index1, batch1, data.x, data.edge_index, data.batch)
-            g2 = model(x2, edge_index2, batch2, data.x, data.edge_index, data.batch)
-        else:
-            g1 = model(x1, edge_index1, batch1, project=True)
-            g2 = model(x2, edge_index2, batch2, project=True)
+        g1 = model(x1, edge_index1, batch1, project=True)
+        g2 = model(x2, edge_index2, batch2, project=True)
 
-            if requirements.sum_embeddding:
-                g = model(data.x, data.edge_index, data.batch, project=True)
-                g1 = g1 + g
-                g2 = g2 + g
+        if requirements.sum_embeddding:
+            g = model(data.x, data.edge_index, data.batch, project=True)
+            g1 = g1 + g
+            g2 = g2 + g
 
         loss = loss_fn(g1, g2, aug_dims1, aug_dims2, aug_d1, aug_d2)
         loss.backward()
@@ -129,18 +125,11 @@ if __name__ == "__main__":
     # model
     gconv_num_layers = args.gconv_num_layers
     gconv_hidden_dim = args.gconv_hidden_dim
-    if args.concat_embedding:
-        model = ConcatModel(
-            input_dim=input_dim, 
-            hidden_dim=gconv_hidden_dim, 
-            num_layers=gconv_num_layers
-        ).to(device)
-    else:
-        model = GConv(
-            input_dim=input_dim, 
-            hidden_dim=gconv_hidden_dim, 
-            num_layers=gconv_num_layers
-        ).to(device)
+    model = GConv(
+        input_dim=input_dim, 
+        hidden_dim=gconv_hidden_dim, 
+        num_layers=gconv_num_layers
+    ).to(device)
 
     # Pretrain
     save_dir = os.path.join(args.save_dir, model_name)
@@ -226,10 +215,7 @@ if __name__ == "__main__":
                 model.load_state_dict(torch.load(os.path.join(save_dir, f"epoch{epoch}.pt")))
 
                 # finetune, test and statistic
-                if args.concat_embedding:
-                    test_accs = test_accuracy_SVC(model.gconv, dataloader, folds=folds, device=device)
-                else:
-                    test_accs = test_accuracy_SVC(model, dataloader, folds=folds, device=device)
+                test_accs = test_accuracy_SVC(model, dataloader, folds=folds, device=device)
                 mean, std = statistic_results_single_epoch(epoch, test_accs, logger, folds, detail=False)
                 
                 if mean > best_acc:

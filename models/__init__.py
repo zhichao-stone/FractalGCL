@@ -1,2 +1,2 @@
-from .gconv import GConv, ConcatModel
+from .gconv import GConv
 from .mlp import MLP

@@ -32,10 +32,8 @@ class ExpLogger:
 class AdditionalRequirements:
     def __init__(self, args) -> None:
         self.compute_dimension = args.compute_dimension
-        self.concat_embedding = args.concat_embedding
         self.sum_embeddding = args.sum_embedding
         self.concat_graph = args.concat_graph
-        self.merge_graph = args.merge_graph
 
 
 def get_args():
@@ -54,7 +52,6 @@ def get_args():
     parser.add_argument("--renorm_min_edges", type=int, default=1, help="the minimum edge num to be regard as edge between supernodes when renormalizing")
     parser.add_argument("--compute_dimension", action="store_true", help="whether to compute real dimension of augmented graphs")
     parser.add_argument("--concat_graph", action="store_true")
-    parser.add_argument("--merge_graph", action="store_true")
     # model setting
     parser.add_argument("--postfix", type=str, default="", help="postfix of model name for better differentiation")
     parser.add_argument("--gconv_num_layers", type=int, default=2, help="num of layers of GConv for features")
@@ -62,7 +59,6 @@ def get_args():
     parser.add_argument("--mlp_num_layers", type=int, default=2, help="num of layers of MLP for classification")
     parser.add_argument("--mlp_hidden_dim", type=int, default=64, help="hidden dim of MLP for classification")
     parser.add_argument("--sum_embedding", action="store_true")
-    parser.add_argument("--concat_embedding", action="store_true")
     # loss setting
     parser.add_argument("--alpha", type=float, default=0.1, help="weight of gaussian noise of fractal dimension")
     parser.add_argument("--temperature", type=float, default=0.4, help="temperature of loss function")
