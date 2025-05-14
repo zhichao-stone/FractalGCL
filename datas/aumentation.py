@@ -65,8 +65,7 @@ class FractalAugmentor:
         drop_ratio: float = 0.2, 
         aug_fractal_threshold: float = 0.95, 
         renorm_min_edges: int = 1, 
-        device: torch.device = torch.device("cuda"), 
-        concat_graph: bool = False
+        device: torch.device = torch.device("cuda")
     ) -> None:
         self.drop_ratio = drop_ratio
         self.aug_fractal_threshold = aug_fractal_threshold
@@ -129,6 +128,18 @@ class FractalAugmentor:
             _, aug_dimension = compute_box_dimension(G, aug_diameter, self.device)
         return aug_diameter, aug_dimension
 
+    def merge_graph(self, 
+        x1: torch.Tensor, edge_index1: torch.Tensor, 
+        x2: torch.Tensor, edge_index2: torch.Tensor, 
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        ns1 = int(x1.size(0))
+        x1, x2 = x1.to(self.device), x2.to(self.device)
+        edge_index1, edge_index2 = edge_index1.to(self.device), edge_index2.to(self.device)
+
+        x = torch.cat([x1, x2], dim=0)
+        edge_index = torch.cat([edge_index1, edge_index2 + ns1], dim=-1)
+        return x, edge_index
+
     def augment(self, 
         x: torch.FloatTensor,
         edge_index: torch.LongTensor, 
@@ -139,7 +150,8 @@ class FractalAugmentor:
         gids: torch.Tensor, 
         aug_type: str, 
         aug_num: int = 2, 
-        compute_dimension: bool = False
+        compute_dimension: bool = False, 
+        merge_graph: bool = False, 
     ):  
         aug_graphs: List[Tuple[torch.Tensor, torch.Tensor, torch.Tensor]] = []
         aug_dimensions: List[torch.Tensor] = [dimensions.clone() for _ in range(aug_num)]
@@ -183,6 +195,9 @@ class FractalAugmentor:
                         if random.random() < prob:
                             for i in range(aug_num):
                                 aug_x, aug_edge_index = renormalization_graph_random_center(batch_x, batch_edge_index, adj, nadj, radius, self.device, self.renorm_min_edges)
+                                if merge_graph:
+                                    aug_x, aug_edge_index = self.merge_graph(aug_x, aug_edge_index, batch_x, batch_edge_index)
+
                                 aug_xs[i].append(aug_x.to(self.device))
                                 aug_edge_indexs[i].append(aug_edge_index.to(self.device))
                         else:
@@ -215,6 +230,9 @@ class FractalAugmentor:
 
                         for i in range(aug_num):
                             aug_x, aug_edge_index = renormalization_graph_random_center(batch_x, batch_edge_index, adj, nadj, radius, self.device, self.renorm_min_edges)
+                            if merge_graph:
+                                aug_x, aug_edge_index = self.merge_graph(aug_x, aug_edge_index, batch_x, batch_edge_index)
+
                             aug_xs[i].append(aug_x.to(self.device))
                             aug_edge_indexs[i].append(aug_edge_index.to(self.device))
                     else:

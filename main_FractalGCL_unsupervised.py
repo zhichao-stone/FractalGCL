@@ -23,14 +23,6 @@ from utils import *
 
 
 
-class AdditionalRequirements:
-    def __init__(self, args) -> None:
-        self.concat_embedding = args.concat_embedding
-        self.sum_embeddding = args.sum_embedding
-        self.concat_graph = args.concat_graph
-        self.compute_dimension = args.compute_dimension
-
-
 def concat_graph(
     x1: torch.Tensor, edge_index1: torch.Tensor, batch1: torch.Tensor, 
     x2: torch.Tensor, edge_index2: torch.Tensor, batch2: torch.Tensor, 
@@ -68,13 +60,13 @@ def train(
 
         optimizer.zero_grad()
         if aug_num == 2:
-            aug_graphs, aug_dimesions, aug_diameters = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, requirements.compute_dimension)
+            aug_graphs, aug_dimesions, aug_diameters = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, requirements.compute_dimension, requirements.merge_graph)
             (x1, edge_index1, batch1), (x2, edge_index2, batch2) = aug_graphs
             aug_dims1, aug_dims2 = aug_dimesions
             aug_d1, aug_d2 = aug_diameters
         else:
             x1, edge_index1, batch1, aug_dims1, aug_d1 = data.x, data.edge_index, data.batch, dimensions, diameters
-            aug_graphs, aug_dimesions = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, requirements.compute_dimension)
+            aug_graphs, aug_dimesions = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, dimensions, gids, aug_type, aug_num, requirements.compute_dimension, requirements.merge_graph)
             x2, edge_index2, batch2 = aug_graphs[0]
             aug_dims2, aug_d2 = aug_dimesions[0], aug_diameters[0]
 

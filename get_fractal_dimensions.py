@@ -90,7 +90,6 @@ if __name__ == "__main__":
         else:
             diameter_distribution[d] += 1
         
-        
         if r2 > 0:
             is_fractal_num += 1
         r2_interval = int(abs(r2) / 0.05)

@@ -29,6 +29,15 @@ class ExpLogger:
         return self.logger
 
 
+class AdditionalRequirements:
+    def __init__(self, args) -> None:
+        self.compute_dimension = args.compute_dimension
+        self.concat_embedding = args.concat_embedding
+        self.sum_embeddding = args.sum_embedding
+        self.concat_graph = args.concat_graph
+        self.merge_graph = args.merge_graph
+
+
 def get_args():
     aug_type_choices = ["renorm_rc", "renorm_rc_rr", "renorm_rc_prob", "mix_sep", "drop_node", "simple_random_walk"]
     parser = argparse.ArgumentParser()
@@ -45,6 +54,7 @@ def get_args():
     parser.add_argument("--renorm_min_edges", type=int, default=1, help="the minimum edge num to be regard as edge between supernodes when renormalizing")
     parser.add_argument("--compute_dimension", action="store_true", help="whether to compute real dimension of augmented graphs")
     parser.add_argument("--concat_graph", action="store_true")
+    parser.add_argument("--merge_graph", action="store_true")
     # model setting
     parser.add_argument("--postfix", type=str, default="", help="postfix of model name for better differentiation")
     parser.add_argument("--gconv_num_layers", type=int, default=2, help="num of layers of GConv for features")
