@@ -94,14 +94,16 @@ def get_double_center_covers_by_matrix(G: nx.Graph, nadj: torch.Tensor, device: 
     return box_count
 
 
-def compute_box_dimension(G: nx.Graph, diameter: int, plot_path: str = "", device: torch.device = torch.device("cuda")):
+def compute_box_dimension(G: nx.Graph, diameter: int, device: torch.device = torch.device("cuda")):
     # calculate adjacency matrix
+    G = G.copy().to_undirected()
     edges = torch.tensor(list(G.edges())).T
     num_nodes = int(torch.max(edges)) + 1
     values = torch.ones(G.number_of_edges())
 
     I = torch.eye(num_nodes, dtype=torch.int32, device=device)
-    adj = torch.sparse_coo_tensor(edges, values, size=(num_nodes, num_nodes)).to(device)
+    adj = torch.sparse_coo_tensor(edges, values, size=(num_nodes, num_nodes)).to_dense().int().to(device)
+    adj = (adj | adj.T).float()
     nadj = adj.clone().to_dense().to(device)
     current_r = 1
 
@@ -109,15 +111,14 @@ def compute_box_dimension(G: nx.Graph, diameter: int, plot_path: str = "", devic
     max_d = max(1, diameter//2)
     d_values, N_box_values = [], []
 
-    for d in range(2, max_d+1):
+    # for d in range(2, max_d+1):
+    for d in range(1, max_d + 1):
         r = d // 2
         while current_r < r:
             nadj = torch.matmul(nadj, adj) + nadj
             current_r += 1
         nadj[nadj > 0] = 1
-
-        radj = nadj.clone().to_dense().int().to(device)
-        radj = radj | I
+        radj = nadj.clone().to_dense().int().to(device) | I
 
         if d & 1 == 0:  # single center
             box_count = get_single_center_covers(G, radj, device)
@@ -131,25 +132,14 @@ def compute_box_dimension(G: nx.Graph, diameter: int, plot_path: str = "", devic
         N_box_values.append(box_count)
 
     if len(d_values) < 2:
-        return 0.0, 0.0, 0.0, 0.0
+        return 0.0, 0.0
     
     log_l = np.log(np.array(d_values)).reshape(-1, 1)
     log_N_box = np.log(np.array(N_box_values))
 
     reg = LinearRegression().fit(log_l, log_N_box)
-    m, b = float(reg.coef_[0]), float(reg.intercept_)
+    m = float(reg.coef_[0])
     R2 = float(reg.score(log_l, log_N_box))
     box_dimension = -m
-    G_logy_fit_1 = m * log_l.flatten() + b
-
-    if plot_path:
-        plt.figure(figsize=(10, 6))
-        plt.loglog(d_values, N_box_values, "o", label="Data points")
-        plt.loglog(d_values, np.exp(G_logy_fit_1), label=f"slope={m:.2f}\nR²={R2:.2f}", linestyle="--")
-        plt.xlabel("X (log scale)")
-        plt.ylabel("Y (log scale)")
-        plt.title(f"Log-Log Plot, R²={R2:.3f}, dim_B={box_dimension:.3f}")
-        plt.savefig(plot_path)
-        plt.clf()
     
-    return m, b, R2, box_dimension
+    return R2, box_dimension

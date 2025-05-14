@@ -28,7 +28,7 @@ def renormalization_graph_random_center(
     center_nodes: np.ndarray = np.zeros(num_nodes, dtype=int)
     # adjacency matrix for N-hop
     Adj = adj.clone().to(device)
-    N_Adj = nadj.clone().to_dense().int().to(device) | torch.eye(num_nodes, dtype=torch.int32, device=device)
+    N_Adj = nadj.clone().int().to(device) | torch.eye(num_nodes, dtype=torch.int32, device=device)
 
     all_nodes = list(range(num_nodes))
     remaining_nodes = set(all_nodes)
@@ -105,13 +105,14 @@ class FractalAugmentor:
         if gid not in self.nadjs:
             num_nodes = edge_index.max().item() + 1
             values = torch.ones(edge_index.size(-1)).to(self.device)
-            adj = torch.sparse_coo_tensor(edge_index, values, size=(num_nodes, num_nodes)).to(self.device)
+            adj = torch.sparse_coo_tensor(edge_index, values, size=(num_nodes, num_nodes)).to_dense().int().to(self.device)
+            adj = (adj | adj.T).float() # undirected, 2025-05-14
             self.nadjs[gid] = [adj]
 
         current_r = len(self.nadjs[gid]) - 1
         if current_r < max_r - 1:
             Adj = self.nadjs[gid][0]
-            N_Adj = self.nadjs[gid][current_r].clone().to_dense().to(self.device)
+            N_Adj = self.nadjs[gid][current_r].clone().to(self.device)
             while current_r < max_r - 1:
                 N_Adj = torch.matmul(N_Adj, Adj) + N_Adj
                 self.nadjs[gid].append(N_Adj.clone().to(self.device))
@@ -125,7 +126,7 @@ class FractalAugmentor:
             lcc = max(nx.connected_components(nx.to_undirected(G.copy())), key=len)
             lccG: nx.Graph = G.subgraph(lcc)
             aug_diameter: int = nx.diameter(lccG)
-            _, _, _, aug_dimension = compute_box_dimension(G, aug_diameter, "", self.device)
+            _, aug_dimension = compute_box_dimension(G, aug_diameter, self.device)
         return aug_diameter, aug_dimension
 
     def augment(self, 

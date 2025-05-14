@@ -8,7 +8,7 @@ from datas import compute_box_dimension
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def get_fractal_dimension(G:nx.Graph, count_diameter_less_nine: bool = True, plot_path: str = ""):
+def get_fractal_dimension(G:nx.Graph, count_diameter_less_nine: bool = True):
     # get the largest connected subgraph
     largest_cc = max(nx.connected_components(nx.to_undirected(G.copy())), key=len)
     lcc_G: nx.Graph = G.subgraph(largest_cc).copy()
@@ -16,22 +16,21 @@ def get_fractal_dimension(G:nx.Graph, count_diameter_less_nine: bool = True, plo
 
     # get fractal dimension
     if not count_diameter_less_nine and diameter <= 9:
-        regression_1 = {"Can Test Fractality": False}
+        r2, dimension = 0.0, 0.0
     else:
-        slope_1, intercept_1, R2_1, box_dimension_1 = compute_box_dimension(G, diameter, plot_path, DEVICE)
-        if box_dimension_1 > 0:
-            regression_1 = {"Slope": slope_1, "Intercept": intercept_1, "R²": R2_1, "Box_Dimension": box_dimension_1}
-        else:
-            regression_1 = {"Can Test Fractality": False}
+        r2, dimension = compute_box_dimension(G, diameter, DEVICE)
+        if r2 <= 0:
+            r2, dimension = 0.0, 0.0
 
     regression_result = {
-        "Statistics of Graph": {
-            "Nodes": G.number_of_nodes(),
-            "Edges": G.number_of_edges(),
-            "Diameter": diameter,
+        "statistics of graph": {
+            "nodes": G.number_of_nodes(),
+            "edges": G.number_of_edges(),
+            "diameter": diameter,
         },
-        "Linear Regression": {
-            "Origin Graph": regression_1
+        "fractality": {
+            "r²": r2, 
+            "dimension": dimension
         }
     }
 
@@ -84,24 +83,26 @@ if __name__ == "__main__":
     r2_distribution = {f"{k*0.05:.2f}": 0 for k in range(1, 20)}
     diameter_distribution = {}
     for r in regression_results:
-        res = r["Linear Regression"]["Origin Graph"]
-        d = r["Statistics of Graph"]["Diameter"]
+        r2 = r["fractality"]["r²"]
+        d = r["statistics of graph"]["diameter"]
         if d not in diameter_distribution:
             diameter_distribution[d] = 1
         else:
             diameter_distribution[d] += 1
-        if "R²" in res:
+        
+        
+        if r2 > 0:
             is_fractal_num += 1
-            r2_interval = int(abs(res["R²"]) / 0.05)
-            if r2_interval == 20:
-                r2_interval -= 1
-            for k in range(1, r2_interval+1):
-                r2_distribution[f"{k*0.05:.2f}"] += 1
+        r2_interval = int(abs(r2) / 0.05)
+        if r2_interval == 20:
+            r2_interval -= 1
+        for k in range(1, r2_interval+1):
+            r2_distribution[f"{k*0.05:.2f}"] += 1
     
     statistic = {
         "total graphs": total, 
-        "proportion of fractal graphs": f"num={is_fractal_num} | proportion={is_fractal_num/total:.2%}", 
-        "help": "The following distribution's format: \"Key: Number | Proportion\"", 
+        "help": "The format: \"Number | Proportion ( Numer / Total)\"",
+        "proportion of fractal graphs": f"{is_fractal_num} | {is_fractal_num/total:.2%}",  
         "fractality distribution": {
             f">= {k}": f"{v:4d} | {v/total:.2%}" for k, v in r2_distribution.items()
         }, 

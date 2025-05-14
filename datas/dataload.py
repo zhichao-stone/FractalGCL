@@ -47,14 +47,10 @@ def process_fractal_results(fractal_results: List[Dict[str, str]], dataset_size:
         ) for _ in range(dataset_size)]
     else:
         for r in fractal_results:
-            diameter = r["Statistics of Graph"]["Diameter"]
-            res = r["Linear Regression"]["Origin Graph"]
-            if "Can Test Fractality" in res:
-                fractality = 0.0
-                box_dimension = 0.0
-            else:
-                fractality = res["R²"]
-                box_dimension = - res["Slope"]
+            diameter = r["statistics of graph"]["diameter"]
+            res = r["fractality"]
+            fractality = res["r²"]
+            box_dimension = res["dimension"]
             fractal_attrs.append(FractalAttr(
                 box_dimension=box_dimension, 
                 fractality=fractality, 
