@@ -7,7 +7,7 @@ import time
 import numpy as np
 from tqdm import tqdm
 from datetime import datetime
-from typing import Union, Tuple
+from typing import Tuple
 
 import torch
 import torch.optim as optim
@@ -22,22 +22,6 @@ from evaluate import test_accuracy_SVC
 from utils import *
 
 
-
-def concat_graph(
-    x1: torch.Tensor, edge_index1: torch.Tensor, batch1: torch.Tensor, 
-    x2: torch.Tensor, edge_index2: torch.Tensor, batch2: torch.Tensor, 
-    device: torch.device = torch.device("cuda")
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    bs1, bs2 = int(max(batch1)) + 1, int(max(batch2)) + 1
-    assert bs1 == bs2
-    ns1 = int(x1.size(0))
-    x1, x2 = x1.to(device), x2.to(device)
-    edge_index1, edge_index2 = edge_index1.to(device), edge_index2.to(device)
-    batch1, batch2 = batch1.to(device), batch2.to(device)
-    x = torch.cat([x1, x2], dim=0)
-    edge_index = torch.cat([edge_index1, edge_index2 + ns1], dim=-1)
-    batch = torch.cat([batch1, batch2], dim=-1)
-    return x, edge_index, batch
 
 def train(
     model: GConv, 
@@ -79,8 +63,7 @@ def train(
 
         if requirements.sum_embeddding:
             g = model(data.x, data.edge_index, data.batch, project=True)
-            g1 = g1 + g
-            g2 = g2 + g
+            g1, g2 = g1 + g, g2 + g
 
         loss = loss_fn(g1, g2, aug_dims1, aug_dims2, aug_d1, aug_d2)
         loss.backward()
@@ -185,19 +168,12 @@ if __name__ == "__main__":
                 pbar.set_postfix({"loss": round(loss, 4), "time": round(epoch_time_cost, 2)})
 
                 if epoch % 5 == 0:
-                    # test_accs = test_accuracy_SVC(model, pure_dataloader, folds=folds, device=device)
-                    # text_acc = np.mean(test_accs)
-                    # logger.info(f"# Epoch: {epoch} | test acc: {text_acc:.4f}")
-                    # epoch_accs.append(text_acc)
                     torch.save(model.state_dict(), os.path.join(save_dir, f"epoch{epoch}.pt"))
 
                 pbar.update()
         logger.info(f"# Pretraining Time Cost: {time_cost} s")
                 
         torch.save(model.state_dict(), os.path.join(save_dir, f"epoch{epoch}.pt"))
-        # best_epoch, best_acc = max(enumerate(epoch_accs), key=lambda x:x[1])
-        # best_epoch = (best_epoch + 1) * 5
-        # logger.info(f"# Final Results: {best_acc:.4f} , epoch={best_epoch:3d}\n\n")
 
     # Multiple Experiment: K-Fold Finetune and Test
     accs, acc_epochs = [], []

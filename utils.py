@@ -4,7 +4,7 @@ import random
 import torch
 import numpy as np
 import logging
-from typing import List
+from typing import List, Tuple
 
 
 
@@ -105,3 +105,20 @@ def statistic_results_single_epoch(epoch: int, accs: List[float], logger: loggin
         logger.info(f"# Epoch: {epoch:03d} | Average Accs of {folds} Folds: {mean:.4f}, Std: {std:.4f}")
 
     return mean, std
+
+
+def concat_graph(
+    x1: torch.Tensor, edge_index1: torch.Tensor, batch1: torch.Tensor, 
+    x2: torch.Tensor, edge_index2: torch.Tensor, batch2: torch.Tensor, 
+    device: torch.device = torch.device("cuda")
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    bs1, bs2 = int(max(batch1)) + 1, int(max(batch2)) + 1
+    assert bs1 == bs2
+    ns1 = int(x1.size(0))
+    x1, x2 = x1.to(device), x2.to(device)
+    edge_index1, edge_index2 = edge_index1.to(device), edge_index2.to(device)
+    batch1, batch2 = batch1.to(device), batch2.to(device)
+    x = torch.cat([x1, x2], dim=0)
+    edge_index = torch.cat([edge_index1, edge_index2 + ns1], dim=-1)
+    batch = torch.cat([batch1, batch2], dim=-1)
+    return x, edge_index, batch

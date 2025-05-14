@@ -30,6 +30,7 @@ def train(
     augmentor: FractalAugmentor, 
     aug_type: str, 
     loss_fn: FractalGCLLoss, 
+    requirements: AdditionalRequirements, 
     device: torch.device = torch.device("cuda"), 
     aug_num: int = 2
 ):
@@ -43,14 +44,28 @@ def train(
 
         optimizer.zero_grad()
         if aug_num == 2:
-            (x1, edge_index1, batch1), (x2, edge_index2, batch2) = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, gids, aug_type, aug_num)
+            aug_graphs, aug_dimesions, aug_diameters = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, gids, aug_type, aug_num, requirements.compute_dimension)
+            (x1, edge_index1, batch1), (x2, edge_index2, batch2) = aug_graphs
+            aug_dims1, aug_dims2 = aug_dimesions
+            aug_d1, aug_d2 = aug_diameters
         else:
-            x1, edge_index1, batch1 = data.x, data.edge_index, data.batch
-            x2, edge_index2, batch2 = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, gids, aug_type, aug_num)[0]
+            x1, edge_index1, batch1, aug_dims1, aug_d1 = data.x, data.edge_index, data.batch, dimensions, diameters
+            aug_graphs, aug_dimesions = augmentor.augment(data.x, data.edge_index, data.batch, fractalities, diameters, gids, aug_type, aug_num, requirements.compute_dimension)[0]
+            x2, edge_index2, batch2 = aug_graphs[0]
+            aug_dims2, aug_d2 = aug_dimesions[0], aug_diameters[0]
+
+        if requirements.concat_graph:
+            x1, edge_index1, batch1 = concat_graph(x1, edge_index1, batch1, data.x, data.edge_index, data.batch, device)
+            x2, edge_index2, batch2 = concat_graph(x2, edge_index2, batch2, data.x, data.edge_index, data.batch, device)
+
         g1 = model(x1, edge_index1, batch1, project=True)
         g2 = model(x2, edge_index2, batch2, project=True)
 
-        loss = loss_fn(g1, g2, dimensions, diameters)
+        if requirements.sum_embeddding:
+            g = model(data.x, data.edge_index, data.batch, project=True)
+            g1, g2 = g1 + g, g2 + g
+
+        loss = loss_fn(g1, g2, aug_dims1, aug_dims2, aug_d1, aug_d2)
         loss.backward()
 
         optimizer.step()
@@ -189,6 +204,8 @@ if __name__ == "__main__":
         if save_model_file_name:
             model.load_state_dict(torch.load(os.path.join(save_dir, save_model_file_name)))
 
+        requirements = AdditionalRequirements(args)
+
         augmentor = FractalAugmentor(
             drop_ratio=args.aug_ratio, 
             aug_fractal_threshold=args.aug_threshold, 
@@ -205,7 +222,16 @@ if __name__ == "__main__":
         with tqdm(total=max_epochs-current_epoch, desc="pretrain") as pbar:
             for epoch in range(current_epoch+1, max_epochs+1):
                 st = time.time()
-                loss = train(model, dataloader, optimizer, augmentor, aug_type, loss_fn, device, aug_num=args.aug_num)
+                loss = train(
+                    model, 
+                    dataloader, 
+                    optimizer, 
+                    augmentor, 
+                    aug_type, 
+                    loss_fn, 
+                    requirements=requirements, 
+                    device=device, 
+                    aug_num=args.aug_num)
                 pbar.set_postfix({"loss": round(loss, 4), "time": round(time.time() - st, 2)})
 
                 if epoch % 5 == 0:
