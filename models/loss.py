@@ -31,12 +31,15 @@ class GCLLoss(Loss):
 
 
 class FractalGCLLoss(GCLLoss):
-    def __init__(self, temperature: float = 0.5, alpha: float = 0.01, sigma: float = 0.1) -> None:
+    def __init__(self, temperature: float = 0.4, alpha: float = 0.1, sigma: float = 0.1) -> None:
         super(FractalGCLLoss, self).__init__(temperature)
         self.alpha = alpha
         self.sigma = sigma
 
-    def gaussian_box_dimension_random_matrix(self, dimensions1: torch.Tensor, dimensions2: torch.Tensor, diameters1: torch.Tensor, diameters2: torch.Tensor):
+    def gaussian_box_dimension_random_matrix(self, 
+        dimensions1: torch.Tensor, diameters1: torch.Tensor,  
+        dimensions2: torch.Tensor, diameters2: torch.Tensor
+    ):
         d1, d2 = np.maximum(diameters1.detach().cpu().numpy(), 2), np.maximum(diameters2.detach().cpu().numpy(), 2)
         dims1, dims2 = dimensions1.detach().cpu().numpy(), dimensions2.detach().cpu().numpy()
         tau21, tau22 = 6*(self.sigma**2) / (d1 * (np.log(d1) ** 2)), 6*(self.sigma**2) / (d2 * (np.log(d2) ** 2))
@@ -46,10 +49,18 @@ class FractalGCLLoss(GCLLoss):
         G_noise = np.random.normal(loc=mu, scale=std)
         return torch.from_numpy(G_noise)
 
-    def __call__(self, v1: torch.Tensor, v2: torch.Tensor, dimensions1: torch.Tensor, dimensions2: torch.Tensor, diameters1: torch.Tensor, diameters2: torch.Tensor, **kwargs) -> torch.Tensor:
+    def __call__(self, 
+        v1: torch.Tensor, v2: torch.Tensor, 
+        dimensions1: torch.Tensor, dimensions2: torch.Tensor, 
+        diameters1: torch.Tensor, diameters2: torch.Tensor, 
+        **kwargs
+    ) -> torch.Tensor:
         sim = torch.matmul(F.normalize(v1), F.normalize(v2).T) / self.temperature
         if self.alpha > 0:
-            noise = self.gaussian_box_dimension_random_matrix(dimensions1, dimensions2, diameters1, diameters2).to(sim.device)
+            noise = self.gaussian_box_dimension_random_matrix(
+                dimensions1, diameters1, 
+                dimensions2, diameters2
+            ).to(sim.device)
             sim = sim + self.alpha * noise
 
         sim = torch.exp(sim)
