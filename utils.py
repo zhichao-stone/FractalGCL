@@ -37,7 +37,7 @@ class KeyArguments:
 
 
 def get_args():
-    aug_type_choices = ["renorm_rc", "renorm_rc_rr", "renorm_rc_prob", "mix_sep", "drop_node", "simple_random_walk"]
+    aug_type_choices = ["renorm_rc", "renorm_rc_rr", "renorm_rc_prob", "mix_sep", "drop_node"]
     parser = argparse.ArgumentParser()
 
     # base environment

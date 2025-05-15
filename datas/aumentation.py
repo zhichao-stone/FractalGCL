@@ -4,10 +4,27 @@ from typing import List, Dict, Tuple
 import numpy as np
 import networkx as nx
 import torch
-import GCL.augmentors as A
+from torch.distributions.bernoulli import Bernoulli
+from torch_geometric.utils import subgraph
 
 from .fractal import compute_box_dimension
 
+
+
+def drop_node(
+    x: torch.Tensor, 
+    edge_index: torch.Tensor, 
+    drop_ratio: float = 0.5, 
+    device: torch.device = torch.device("cuda")
+):
+    num_nodes = edge_index.max().item() + 1
+    probs = torch.tensor([1 - drop_ratio for _ in range(num_nodes)])
+    dist = Bernoulli(probs)
+    
+    subset = dist.sample().to(torch.bool).to(device)
+    aug_edge_index, _ = subgraph(subset, edge_index.to(device))
+
+    return x.to(device), aug_edge_index.to(device)
 
 
 def renormalization_graph_random_center(
@@ -16,7 +33,7 @@ def renormalization_graph_random_center(
     adj: torch.Tensor, 
     nadj: torch.Tensor, 
     radius: int, 
-    device: torch.device, 
+    device: torch.device = torch.device("cuda"), 
     min_edges: int = 1
 ):
     if radius <= 0:
@@ -72,8 +89,6 @@ class FractalAugmentor:
         self.renorm_min_edges = renorm_min_edges
         self.device = device
 
-        self.default_aug = A.NodeDropping(self.drop_ratio)
-        self.non_fractal_aug_types = ["drop_node", "simple_random_walk"]
         self.nadjs: Dict[int, List[torch.Tensor]] = {}
 
     def merge_batch(self, batch_x: List[torch.FloatTensor], batch_edge_index: List[torch.LongTensor]):
@@ -144,16 +159,9 @@ class FractalAugmentor:
         aug_dimensions: List[torch.Tensor] = [dimensions.clone() for _ in range(aug_num)]
         aug_diameters: List[torch.Tensor] = [diameters.clone() for _ in range(aug_num)]
 
-        if aug_type in self.non_fractal_aug_types:
-            if aug_type == "drop_node":
-                augmentor = A.NodeDropping(self.drop_ratio)
-            elif aug_type == "simple_random_walk":
-                augmentor = A.RWSampling(num_seeds=1000, walk_length=10)
-            else:
-                raise NotImplementedError(f"Augmentation method {aug_type} is not supported!")
-
+        if aug_type in ["drop_node"]:
             for i in range(aug_num):
-                aug_x, aug_edge_index = augmentor(x, edge_index)[:2]
+                aug_x, aug_edge_index = drop_node(x, edge_index, self.drop_ratio, self.device)
                 aug_graphs.append((aug_x.to(self.device), aug_edge_index.to(self.device), batch.clone().to(self.device)))
 
             if compute_dimension:
@@ -187,12 +195,12 @@ class FractalAugmentor:
                                 aug_edge_indexs[i].append(aug_edge_index.to(self.device))
                         else:
                             for i in range(aug_num):
-                                aug_x, aug_edge_index = self.default_aug(batch_x, batch_edge_index)[:2]
+                                aug_x, aug_edge_index = drop_node(batch_x, batch_edge_index, self.drop_ratio, self.device)
                                 aug_xs[i].append(aug_x.to(self.device))
                                 aug_edge_indexs[i].append(aug_edge_index.to(self.device))
                     else:
                         for i in range(aug_num):
-                            aug_x, aug_edge_index = self.default_aug(batch_x, batch_edge_index)[:2]
+                            aug_x, aug_edge_index = drop_node(batch_x, batch_edge_index, self.drop_ratio, self.device)
                             aug_xs[i].append(aug_x.to(self.device))
                             aug_edge_indexs[i].append(aug_edge_index.to(self.device))
 
@@ -220,7 +228,7 @@ class FractalAugmentor:
                             aug_edge_indexs[i].append(aug_edge_index.to(self.device))
                     else:
                         for i in range(aug_num):
-                            aug_x, aug_edge_index = self.default_aug(batch_x, batch_edge_index)[:2]
+                            aug_x, aug_edge_index = drop_node(batch_x, batch_edge_index, self.drop_ratio, self.device)
                             aug_xs[i].append(aug_x.to(self.device))
                             aug_edge_indexs[i].append(aug_edge_index.to(self.device))
             else:
