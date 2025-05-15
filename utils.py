@@ -33,7 +33,7 @@ class AdditionalRequirements:
     def __init__(self, args) -> None:
         self.compute_dimension = args.compute_dimension
         self.sum_embeddding = args.sum_embedding
-        self.concat_graph = args.concat_graph
+        self.only_renorm = args.only_renorm
 
 
 def get_args():
@@ -51,7 +51,7 @@ def get_args():
     parser.add_argument("--aug_threshold", type=float, default=0.9, help="threshold of fractal r2 for renormalization")
     parser.add_argument("--renorm_min_edges", type=int, default=1, help="the minimum edge num to be regard as edge between supernodes when renormalizing")
     parser.add_argument("--compute_dimension", action="store_true", help="whether to compute real dimension of augmented graphs")
-    parser.add_argument("--concat_graph", action="store_true")
+    parser.add_argument("--only_renorm", action="store_true")
     # model setting
     parser.add_argument("--postfix", type=str, default="", help="postfix of model name for better differentiation")
     parser.add_argument("--gconv_num_layers", type=int, default=2, help="num of layers of GConv for features")
@@ -66,7 +66,7 @@ def get_args():
     # training setting
     parser.add_argument("--save_dir", type=str, default="save_model", help="directory of saved model")
     parser.add_argument("--pretrain_max_epochs", type=int, default=100, help="max training epochs when pretraining")
-    parser.add_argument("--pretrain_lr", type=float, default=0.01, help="learning rate of pretraining")
+    parser.add_argument("--pretrain_lr", type=float, default=0.001, help="learning rate of pretraining")
     parser.add_argument("--pretrain_wd", type=float, default=0.0, help="weight decay of pretraining")
     parser.add_argument("--finetune_max_epochs", type=int, default=100, help="max training epochs when finetuning")
     parser.add_argument("--finetune_lr", type=float, default=0.001, help="learning rate of finetuning")

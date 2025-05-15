@@ -53,7 +53,7 @@ def train(
             x2, edge_index2, batch2 = aug_graphs[0]
             aug_dims2, aug_d2 = aug_dimesions[0], aug_diameters[0]
 
-        if requirements.concat_graph:
+        if not requirements.only_renorm:
             x1, edge_index1, batch1 = concat_graph(x1, edge_index1, batch1, data.x, data.edge_index, data.batch, device)
             x2, edge_index2, batch2 = concat_graph(x2, edge_index2, batch2, data.x, data.edge_index, data.batch, device)
         

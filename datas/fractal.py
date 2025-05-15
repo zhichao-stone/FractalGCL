@@ -104,7 +104,7 @@ def compute_box_dimension(G: nx.Graph, diameter: int, device: torch.device = tor
     I = torch.eye(num_nodes, dtype=torch.int32, device=device)
     adj = torch.sparse_coo_tensor(edges, values, size=(num_nodes, num_nodes)).to_dense().int().to(device)
     adj = (adj | adj.T).float()
-    nadj = adj.clone().to_dense().to(device)
+    nadj = adj.clone().to(device)
     current_r = 1
 
     # compute box dimension

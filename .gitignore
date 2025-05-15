@@ -5,3 +5,5 @@ results/*
 *.xlsx
 sh_files/*
 statistic*
+graph_figure*
+*_mlp.py
