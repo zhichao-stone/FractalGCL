@@ -7,7 +7,6 @@ Code of *"Fractal Graph Contrastive Learning"*
 ### 1. Requirements
 
 ```
-PyGCL
 torch
 torch-geometric
 scikit-learn
