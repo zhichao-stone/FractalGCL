@@ -117,19 +117,20 @@ class FractalAugmentor:
 
     def calculate_nadj(self, gid: int, edge_index: torch.Tensor, max_r: int):
         if gid not in self.nadjs:
+            # if Graph[gid] hasn't appeared, initialize its adjacency matrix
             num_nodes = edge_index.max().item() + 1
             values = torch.ones(edge_index.size(-1)).to(self.device)
             adj = torch.sparse_coo_tensor(edge_index, values, size=(num_nodes, num_nodes)).to_dense().int().to(self.device)
-            adj = (adj | adj.T).float() # undirected, 2025-05-14
+            adj = (adj | adj.T).float() # to undirected
             self.nadjs[gid] = [adj]
 
         current_r = len(self.nadjs[gid]) - 1
         if current_r < max_r - 1:
-            Adj = self.nadjs[gid][0]
-            N_Adj = self.nadjs[gid][current_r].clone().to(self.device)
+            adj = self.nadjs[gid][0]
+            nadj = self.nadjs[gid][current_r].clone().to(self.device)
             while current_r < max_r - 1:
-                N_Adj = torch.matmul(N_Adj, Adj) + N_Adj
-                self.nadjs[gid].append(N_Adj.clone().to(self.device))
+                nadj = torch.matmul(nadj, adj) + nadj
+                self.nadjs[gid].append(nadj.clone().to(self.device))
                 current_r += 1
 
     def compute_aug_diameter_dimension(self, edge_index: torch.Tensor):
