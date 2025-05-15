@@ -130,7 +130,9 @@ def concat_graph(
     x1, x2 = x1.to(device), x2.to(device)
     edge_index1, edge_index2 = edge_index1.to(device), edge_index2.to(device)
     batch1, batch2 = batch1.to(device), batch2.to(device)
+    
     x = torch.cat([x1, x2], dim=0)
     edge_index = torch.cat([edge_index1, edge_index2 + ns1], dim=-1)
     batch = torch.cat([batch1, batch2], dim=-1)
+
     return x, edge_index, batch

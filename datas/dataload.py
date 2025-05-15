@@ -23,6 +23,7 @@ def dump_json(obj, path: str, **kwargs):
     with open(path, mode, encoding=encoding, **kwargs) as fw:
         json.dump(obj, fw, ensure_ascii=False, indent=indent)
 
+
 class FractalAttr:
     def __init__(self, 
         box_dimension: float, 
