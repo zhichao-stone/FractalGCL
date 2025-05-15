@@ -7,6 +7,9 @@ from sklearn.linear_model import LinearRegression
 
 
 def get_single_center_covers(G: nx.Graph, nadj: torch.Tensor, device: torch.device = torch.device("cuda")):
+    '''
+    Use box counting algorithm to get covers that each cover has only one center.
+    '''
     box_count = 0
     radj = nadj.clone().to(device)
     uncovered = set(G.nodes)
@@ -24,7 +27,12 @@ def get_single_center_covers(G: nx.Graph, nadj: torch.Tensor, device: torch.devi
     box_count += len(uncovered)
     return box_count
 
+
 def get_double_center_covers_by_networkx(G: nx.Graph, radius: int):
+    '''
+    Use box counting algorithm to get covers that each cover has two adjacent centers.
+    Use function of networkx.
+    '''
     box_count = 0
     uncovered = set(G.nodes)
     while uncovered:
@@ -55,7 +63,12 @@ def get_double_center_covers_by_networkx(G: nx.Graph, radius: int):
     box_count += len(uncovered)
     return box_count
 
+
 def get_double_center_covers_by_matrix(G: nx.Graph, nadj: torch.Tensor, device: torch.device = torch.device("cuda")):
+    '''
+    Use box counting algorithm to get covers that each cover has two adjacent centers.
+    Use Torch's matrix multiplication operation for acceleration.
+    '''
     box_count = 0
     radj = nadj.clone().to(device)
     uncovered = set(G.nodes)
@@ -120,9 +133,9 @@ def compute_box_dimension(G: nx.Graph, diameter: int, device: torch.device = tor
         nadj[nadj > 0] = 1
         radj = nadj.clone().to_dense().int().to(device) | I
 
-        if d & 1 == 0:  # single center
+        if d & 1 == 0:  # When the diameter is even, the box is centered around a single node.
             box_count = get_single_center_covers(G, radj, device)
-        else:           # double center
+        else:   # When the diameter is odd, the box is centered around two adjacent nodes
             if r <= 5:
                 box_count = get_double_center_covers_by_networkx(G, r)
             else:
@@ -134,12 +147,12 @@ def compute_box_dimension(G: nx.Graph, diameter: int, device: torch.device = tor
     if len(d_values) < 2:
         return 0.0, 0.0
     
+    # linear regression
     log_l = np.log(np.array(d_values)).reshape(-1, 1)
     log_N_box = np.log(np.array(N_box_values))
 
     reg = LinearRegression().fit(log_l, log_N_box)
-    m = float(reg.coef_[0])
-    R2 = float(reg.score(log_l, log_N_box))
-    box_dimension = -m
+    box_dimension = - float(reg.coef_[0])
+    r2 = float(reg.score(log_l, log_N_box))
     
-    return R2, box_dimension
+    return r2, box_dimension
