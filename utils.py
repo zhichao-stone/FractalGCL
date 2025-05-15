@@ -29,19 +29,21 @@ class ExpLogger:
         return self.logger
 
 
-class AdditionalRequirements:
+class KeyArguments:
     def __init__(self, args) -> None:
+        self.num_aug_graphs = args.aug_num
         self.compute_dimension = args.compute_dimension
-        self.sum_embeddding = args.sum_embedding
         self.only_renorm = args.only_renorm
 
 
 def get_args():
     aug_type_choices = ["renorm_rc", "renorm_rc_rr", "renorm_rc_prob", "mix_sep", "drop_node", "simple_random_walk"]
     parser = argparse.ArgumentParser()
+
     # base environment
     parser.add_argument("--random_seed", type=int, default=42, help="random seed for training")
     parser.add_argument("--cpu", action="store_true", help="whether to use cpu")
+
     # data setting
     parser.add_argument("--data", type=str, default="MUTAG", help="The name of TUDataset. See https://chrsmrrs.github.io/datasets/docs/datasets for detail.")
     parser.add_argument("--batch_size", type=int, default=128, help="batch size for loading data")
@@ -52,28 +54,31 @@ def get_args():
     parser.add_argument("--renorm_min_edges", type=int, default=1, help="the minimum edge num to be regard as edge between supernodes when renormalizing")
     parser.add_argument("--compute_dimension", action="store_true", help="whether to compute real dimension of augmented graphs")
     parser.add_argument("--only_renorm", action="store_true")
+
     # model setting
     parser.add_argument("--postfix", type=str, default="", help="postfix of model name for better differentiation")
     parser.add_argument("--gconv_num_layers", type=int, default=2, help="num of layers of GConv for features")
     parser.add_argument("--gconv_hidden_dim", type=int, default=64, help="hidden dim of GConv for features")
-    parser.add_argument("--mlp_num_layers", type=int, default=2, help="num of layers of MLP for classification")
-    parser.add_argument("--mlp_hidden_dim", type=int, default=64, help="hidden dim of MLP for classification")
-    parser.add_argument("--sum_embedding", action="store_true")
+    # parser.add_argument("--mlp_num_layers", type=int, default=2, help="num of layers of MLP for classification")
+    # parser.add_argument("--mlp_hidden_dim", type=int, default=64, help="hidden dim of MLP for classification")
+
     # loss setting
     parser.add_argument("--alpha", type=float, default=0.1, help="weight of gaussian noise of fractal dimension")
     parser.add_argument("--temperature", type=float, default=0.4, help="temperature of loss function")
     parser.add_argument("--sigma", type=float, default=0.1, help="sigma of gaussian noise of fractal dimension")
+
     # training setting
     parser.add_argument("--save_dir", type=str, default="save_model", help="directory of saved model")
     parser.add_argument("--pretrain_max_epochs", type=int, default=100, help="max training epochs when pretraining")
     parser.add_argument("--pretrain_lr", type=float, default=0.001, help="learning rate of pretraining")
     parser.add_argument("--pretrain_wd", type=float, default=0.0, help="weight decay of pretraining")
-    parser.add_argument("--finetune_max_epochs", type=int, default=100, help="max training epochs when finetuning")
-    parser.add_argument("--finetune_lr", type=float, default=0.001, help="learning rate of finetuning")
-    parser.add_argument("--finetune_wd", type=float, default=1e-5, help="weight decay of finetuning")
+    # parser.add_argument("--finetune_max_epochs", type=int, default=100, help="max training epochs when finetuning")
+    # parser.add_argument("--finetune_lr", type=float, default=0.001, help="learning rate of finetuning")
+    # parser.add_argument("--finetune_wd", type=float, default=1e-5, help="weight decay of finetuning")
     parser.add_argument("--force_train", action="store_true", help="whether to force pretraining, even when there are saved model")
     parser.add_argument("--folds", type=int, default=10, help="k of k-fold cross validation")
     parser.add_argument("--num_repeat_exp", type=int, default=5, help="num of repeated experiment")
+    
     args = parser.parse_args()
     return args
 
