@@ -124,8 +124,6 @@ def concat_graph(
     x2: torch.Tensor, edge_index2: torch.Tensor, batch2: torch.Tensor, 
     device: torch.device = torch.device("cuda")
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    bs1, bs2 = int(max(batch1)) + 1, int(max(batch2)) + 1
-    assert bs1 == bs2
     ns1 = int(x1.size(0))
     x1, x2 = x1.to(device), x2.to(device)
     edge_index1, edge_index2 = edge_index1.to(device), edge_index2.to(device)
