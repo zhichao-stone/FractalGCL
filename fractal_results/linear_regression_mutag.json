@@ -1,17 +1,2070 @@
 [
     {
-        "Statistics of Graph": {
-            "Nodes": 17,
-            "Edges": 19,
-            "Diameter": 9
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
         },
-        "Linear Regression": {
-            "Origin Graph": {
-                "Slope": -0.7096487756269024,
-                "Intercept": 2.5178731253769477,
-                "R²": 0.829386005798664,
-                "Box_Dimension": 0.7096487756269024
-            }
+        "fractality": {
+            "r²": 0.9588970885334582,
+            "dimension": 0.5839873361479907
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.8668309711260871,
+            "dimension": 0.5414703315312134
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.8668309711260871,
+            "dimension": 0.5414703315312134
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 22,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9863644323861517,
+            "dimension": 0.6423479087820027
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 1.2223924213364477
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 28,
+            "edges": 31,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9468186176465132,
+            "dimension": 0.6617020357597467
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9023130778580876,
+            "dimension": 0.7095516950583014
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 22,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.920126730353686,
+            "dimension": 0.9216065242980855
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9297265200028535,
+            "dimension": 0.7404664010610934
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9219304780732838,
+            "dimension": 0.8182184274600969
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.8718392850278125,
+            "dimension": 0.6976983060505932
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 23,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9966535054770631,
+            "dimension": 0.7310399705189035
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.8694138316218565,
+            "dimension": 0.7239248233203328
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9988676567830954,
+            "dimension": 0.5068044588089192
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 22,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9279889878426388,
+            "dimension": 0.6736804330228018
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.91762213817066,
+            "dimension": 0.4541494546037456
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 0.8073549220576041
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.8794764158684302,
+            "dimension": 0.7410096384514226
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9989001721383384,
+            "dimension": 0.7751322737833878
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 18,
+            "edges": 20,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9116280879159977,
+            "dimension": 0.8294706586295425
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 18,
+            "edges": 19,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9155784379599496,
+            "dimension": 0.8489623828015902
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9530887108240241,
+            "dimension": 0.8808057952287333
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9709422312179538,
+            "dimension": 0.6891968728399245
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 27,
+            "edges": 33,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.8413426709863517,
+            "dimension": 0.6541421925659007
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9530887108240241,
+            "dimension": 0.8808057952287333
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9972205522459378,
+            "dimension": 0.6360061164336472
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9287264343032333,
+            "dimension": 0.7860191000837868
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9530887108240241,
+            "dimension": 0.8808057952287333
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 25,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9849213605136756,
+            "dimension": 0.7366380878719393
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9121077806850407,
+            "dimension": 0.8052925728821754
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.8921151868619885,
+            "dimension": 0.6074567670422183
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 24,
+            "edges": 25,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.7886600055167677,
+            "dimension": 0.9285058209453336
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 25,
+            "diameter": 12
+        },
+        "fractality": {
+            "r²": 0.935941909610371,
+            "dimension": 0.9705849276299474
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9989001721383384,
+            "dimension": 0.7751322737833878
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9219304780732838,
+            "dimension": 0.8182184274600969
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 14,
+            "edges": 15,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.5905399554851687,
+            "dimension": 0.48942970611494563
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 18,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.8849069257659327,
+            "dimension": 0.8267091878210447
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 15,
+            "edges": 16,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.817574991107198,
+            "dimension": 0.7979740742750372
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 15,
+            "edges": 16,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9972205522459378,
+            "dimension": 0.6360061164336472
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.8668309711260871,
+            "dimension": 0.5414703315312134
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9530887108240241,
+            "dimension": 0.8808057952287333
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9297265200028535,
+            "dimension": 0.7404664010610934
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 22,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9922357533432437,
+            "dimension": 0.64678404941243
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9588970885334582,
+            "dimension": 0.5839873361479907
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 12,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.7173170649391364,
+            "dimension": 1.041470331531214
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9575882491741404,
+            "dimension": 0.8452476468619822
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.9144143832546008,
+            "dimension": 0.8212184711423588
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9583637355605548,
+            "dimension": 0.6321626281723921
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 22,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9674873277198096,
+            "dimension": 0.883602148600723
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.8668309711260871,
+            "dimension": 0.5687277721172932
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 26,
+            "edges": 30,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.8414559514613709,
+            "dimension": 0.644602620509251
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 26,
+            "edges": 30,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9990696718169935,
+            "dimension": 0.6155768187741127
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 21,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9043065119292825,
+            "dimension": 0.9052343585361771
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 21,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9674873277198096,
+            "dimension": 0.883602148600723
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 14,
+            "edges": 15,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9972205522459378,
+            "dimension": 0.6360061164336472
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9583637355605548,
+            "dimension": 0.6321626281723921
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 21,
+            "edges": 22,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.9205875017500915,
+            "dimension": 0.8999387420926023
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 25,
+            "edges": 29,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9608640154773743,
+            "dimension": 0.93754948308169
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9982561358026906,
+            "dimension": 0.63435315065259
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 20,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9148981445497187,
+            "dimension": 0.5948319348356144
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9530887108240241,
+            "dimension": 0.8808057952287333
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.8402589487055356,
+            "dimension": 1.0697944119051523
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 24,
+            "diameter": 15
+        },
+        "fractality": {
+            "r²": 0.9614045405384251,
+            "dimension": 0.8439605677428028
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 22,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9085323250624814,
+            "dimension": 0.8129495828398903
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9776539585182622,
+            "dimension": 0.7216459747843504
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9798513646273289,
+            "dimension": 0.789184930475824
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 23,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.8668309711260871,
+            "dimension": 0.5864819427682602
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.8766682098318421,
+            "dimension": 0.7507034836562284
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 21,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9563112581202784,
+            "dimension": 0.6799023675722442
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 14,
+            "edges": 15,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9398219657858299,
+            "dimension": 0.6076820360597087
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 26,
+            "edges": 30,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9599654281171625,
+            "dimension": 0.7681781071860319
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 18,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.8794764158684302,
+            "dimension": 0.7410096384514226
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.8668309711260869,
+            "dimension": 0.3923179639402915
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9269171797351125,
+            "dimension": 0.7641686387746736
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 18,
+            "edges": 19,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.8077861953028864,
+            "dimension": 0.8933650586284695
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 10,
+            "edges": 10,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 1.0000000000000002
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9798513646273289,
+            "dimension": 0.789184930475824
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9189728465719067,
+            "dimension": 0.7265975627071878
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9583637355605548,
+            "dimension": 0.6321626281723921
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 22,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9863644323861517,
+            "dimension": 0.6423479087820027
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 12,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9297265200028535,
+            "dimension": 0.7404664010610934
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 25,
+            "edges": 28,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9160346096455713,
+            "dimension": 0.6874889563549164
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 18,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9189728465719067,
+            "dimension": 0.7265975627071878
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.754674125079683,
+            "dimension": 0.9206420443142304
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9613139529791402,
+            "dimension": 0.7561491105916444
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9287264343032333,
+            "dimension": 0.7860191000837868
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 18,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9798513646273289,
+            "dimension": 0.789184930475824
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 12,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.7173170649391364,
+            "dimension": 1.041470331531214
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 0.8073549220576041
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9821447025136776,
+            "dimension": 0.621868842786453
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 25,
+            "edges": 29,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.9222281626971611,
+            "dimension": 0.9596615930274272
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 22,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9277774034503896,
+            "dimension": 0.5249880894733757
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.7579139006773756,
+            "dimension": 0.6963224156834075
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 22,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9823565772962765,
+            "dimension": 0.6184002400482456
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 20,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9966535054770631,
+            "dimension": 0.7310399705189035
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 25,
+            "edges": 28,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.8421784924343029,
+            "dimension": 0.6544531364707364
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 18,
+            "edges": 20,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9116280879159977,
+            "dimension": 0.8294706586295425
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.8668309711260871,
+            "dimension": 0.5414703315312134
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 15,
+            "edges": 17,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9398219657858299,
+            "dimension": 0.6076820360597087
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9207730536619771,
+            "dimension": 0.8035970062200591
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9821447025136776,
+            "dimension": 0.621868842786453
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 26,
+            "edges": 28,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9615063369142701,
+            "dimension": 0.7002504246190056
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 22,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9922357533432437,
+            "dimension": 0.64678404941243
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9610563756107979,
+            "dimension": 0.5348386054348613
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9892320692289314,
+            "dimension": 0.7499700551582891
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 23,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9383365018628483,
+            "dimension": 0.6217283184459861
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 25,
+            "edges": 28,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.8421784924343029,
+            "dimension": 0.6544531364707364
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 22,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.7653851375809617,
+            "dimension": 0.5524102192330657
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 28,
+            "edges": 33,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.9385078681589433,
+            "dimension": 0.7770511072125597
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 24,
+            "edges": 25,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.974969689608473,
+            "dimension": 0.5879744111371875
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.754674125079683,
+            "dimension": 0.9206420443142304
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 15,
+            "edges": 17,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.777610116398442,
+            "dimension": 0.5837343673259514
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9972205522459378,
+            "dimension": 0.6360061164336472
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9189728465719067,
+            "dimension": 0.7265975627071878
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9297265200028535,
+            "dimension": 0.7404664010610934
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 10,
+            "edges": 10,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9126132163526628,
+            "dimension": 0.9553079170365247
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 21,
+            "edges": 22,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9793845634741614,
+            "dimension": 0.8611735451221654
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 27,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9075395371794988,
+            "dimension": 0.831782491743537
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 21,
+            "edges": 22,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.8694138316218565,
+            "dimension": 0.7239248233203328
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.7684427247936183,
+            "dimension": 0.7121423206871549
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 25,
+            "edges": 28,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9599654281171625,
+            "dimension": 0.7681781071860319
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 21,
+            "edges": 24,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9427572357754237,
+            "dimension": 0.527354488266622
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 18,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.8339807146567837,
+            "dimension": 0.7670808245134376
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9988676567830954,
+            "dimension": 0.5068044588089192
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 22,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9922357533432437,
+            "dimension": 0.64678404941243
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 22,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9002579448706434,
+            "dimension": 0.9513792460262481
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 21,
+            "edges": 22,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.8892534487368627,
+            "dimension": 1.0440747169542306
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 15,
+            "edges": 17,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9995446974702905,
+            "dimension": 0.42643975301871295
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 14,
+            "edges": 14,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9995446974702905,
+            "dimension": 0.42643975301871295
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 0.5849625007211561
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 20,
+            "diameter": 12
+        },
+        "fractality": {
+            "r²": 0.9278443923638998,
+            "dimension": 0.7433063345236669
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 0.26303440583379384
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 21,
+            "edges": 23,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.8716386436199168,
+            "dimension": 1.0973598219362184
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.9198204588787303,
+            "dimension": 0.7548700306537229
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.8402589487055356,
+            "dimension": 1.0697944119051523
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 23,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.990667504140805,
+            "dimension": 0.55810640763319
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.8073101997488739,
+            "dimension": 0.5411796919553374
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9297265200028535,
+            "dimension": 0.7404664010610934
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 1.2223924213364477
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.8668309711260871,
+            "dimension": 0.5687277721172932
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 0.22239242133644788
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 22,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.8978435349000046,
+            "dimension": 1.0852342233317618
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 12,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.5046405528348072,
+            "dimension": 0.3602280484902177
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 1.2223924213364477
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.801426657548565,
+            "dimension": 0.8967704649173117
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 17,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.863090812730571,
+            "dimension": 0.7897940756330966
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9297265200028535,
+            "dimension": 0.7404664010610934
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 15,
+            "edges": 17,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.777610116398442,
+            "dimension": 0.5837343673259514
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 22,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.9371663257254382,
+            "dimension": 0.829093732473733
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 12,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.8668309711260871,
+            "dimension": 0.5414703315312134
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 13,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 0.8073549220576041
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9340463691902778,
+            "dimension": 0.8182986534996969
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 15,
+            "edges": 17,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9995446974702905,
+            "dimension": 0.42643975301871295
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9989001721383384,
+            "dimension": 0.7751322737833878
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 14,
+            "edges": 14,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.9995446974702905,
+            "dimension": 0.42643975301871295
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9297265200028535,
+            "dimension": 0.7404664010610934
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 23,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9203342013194491,
+            "dimension": 0.6654902918280092
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 22,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.920126730353686,
+            "dimension": 0.9216065242980855
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 23,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9966535054770631,
+            "dimension": 0.7310399705189035
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 14,
+            "edges": 14,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9126132163526627,
+            "dimension": 0.9553079170365247
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 26,
+            "edges": 30,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9160346096455713,
+            "dimension": 0.6874889563549164
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 24,
+            "edges": 25,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.6796815587094118,
+            "dimension": 1.0401756896484164
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.9198204588787303,
+            "dimension": 0.7548700306537229
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9644793113634552,
+            "dimension": 0.6453650906139834
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 19,
+            "edges": 22,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9857242510020784,
+            "dimension": 0.6611961251566649
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 23,
+            "edges": 26,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9324816984084865,
+            "dimension": 0.7551584479470345
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.792523965776716,
+            "dimension": 0.6754599597605287
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 7
+        },
+        "fractality": {
+            "r²": 0.754674125079683,
+            "dimension": 0.9206420443142304
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9972205522459378,
+            "dimension": 0.6360061164336472
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 17,
+            "edges": 19,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9321849576174015,
+            "dimension": 0.6151167605235056
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 24,
+            "edges": 25,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.9655096045473851,
+            "dimension": 0.7843373462069804
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9297265200028535,
+            "dimension": 0.7404664010610934
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 21,
+            "edges": 22,
+            "diameter": 11
+        },
+        "fractality": {
+            "r²": 0.8666140114721282,
+            "dimension": 1.0808071500385494
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9075395371794988,
+            "dimension": 0.831782491743537
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 24,
+            "diameter": 10
+        },
+        "fractality": {
+            "r²": 0.9323150445708616,
+            "dimension": 0.8435658929851759
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9297265200028535,
+            "dimension": 0.7404664010610934
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 20,
+            "edges": 22,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9148981445497187,
+            "dimension": 0.5948319348356144
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 14,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9988676567830954,
+            "dimension": 0.5068044588089192
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 23,
+            "diameter": 14
+        },
+        "fractality": {
+            "r²": 0.8976254535744235,
+            "dimension": 0.8195064527857354
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 28,
+            "edges": 33,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9103141706651094,
+            "dimension": 0.5956464464657709
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 11,
+            "edges": 11,
+            "diameter": 5
+        },
+        "fractality": {
+            "r²": 1.0,
+            "dimension": 1.2223924213364477
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 14,
+            "edges": 15,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.8668309711260871,
+            "dimension": 0.6706719891559414
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9340463691902778,
+            "dimension": 0.8182986534996969
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 22,
+            "edges": 25,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.8073101997488739,
+            "dimension": 0.5411796919553374
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 13,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.5169545915412681,
+            "dimension": 0.30667810558958836
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 12,
+            "edges": 13,
+            "diameter": 6
+        },
+        "fractality": {
+            "r²": 0.9297265200028535,
+            "dimension": 0.7404664010610934
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 21,
+            "edges": 24,
+            "diameter": 9
+        },
+        "fractality": {
+            "r²": 0.9366183347448919,
+            "dimension": 0.6923866754383811
+        }
+    },
+    {
+        "statistics of graph": {
+            "nodes": 16,
+            "edges": 18,
+            "diameter": 8
+        },
+        "fractality": {
+            "r²": 0.9798513646273289,
+            "dimension": 0.789184930475824
         }
     }
 ]
