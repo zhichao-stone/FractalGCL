@@ -43,3 +43,9 @@ CUDA_VISIBLE_DEVICES=[GPU_IDS] python main_FractalGCL_unsupervised.py \
 The detail arguments can be seen in the function  `./utils.py/get_args()`
 
 The results will be saved in `./log/FractalGCL_{DATA}_{AUG_TYPE}.log`
+
+
+
+### 3. Experiments for Urban Road Networks
+
+The data, code, and experiment pipeline for urban road networks can be seen under the directory [./FractalGCL_for_city](./FractalGCL_for_city).
